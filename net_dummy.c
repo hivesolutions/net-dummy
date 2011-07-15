@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Hive Drivers. If not, see <http://www.gnu.org/licenses/>.
 
-// __author__    = Jo„o Magalh„es <joamag@hive.pt>
+// __author__    = Jo√£o Magalh√£es <joamag@hive.pt>
 // __version__   = 1.0.0
 // __revision__  = $LastChangedRevision$
 // __date__      = $LastChangedDate$
@@ -264,44 +264,44 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
 
             printk("Size of packet of type UDP: %d\n", udp_packet_size);
 
-        	memcpy(&sender_port, &(skb->data[ip_packet_header_size]), 2);
-			memcpy(&receiver_port, &(skb->data[ip_packet_header_size + 2]), 2);
+            memcpy(&sender_port, &(skb->data[ip_packet_header_size]), 2);
+            memcpy(&receiver_port, &(skb->data[ip_packet_header_size + 2]), 2);
 
-        	memcpy(&(skb->data[ip_packet_header_size]), &receiver_port, 2);
-			memcpy(&(skb->data[ip_packet_header_size + 2]), &sender_port, 2);
+            memcpy(&(skb->data[ip_packet_header_size]), &receiver_port, 2);
+            memcpy(&(skb->data[ip_packet_header_size + 2]), &sender_port, 2);
 
-			if(udp_packet_size - 8 == 16) {
-				printk("Received packet of type ARITHMETIC\n");
+            if(udp_packet_size - 8 == 16) {
+                printk("Received packet of type ARITHMETIC\n");
 
-				unsigned int *base_value = (unsigned int *) &(skb->data[ip_packet_header_size + 8]);
+                unsigned int *base_value = (unsigned int *) &(skb->data[ip_packet_header_size + 8]);
 
-				unsigned int type = base_value[0];
-				unsigned int first_value = base_value[1];
-				unsigned int second_value = base_value[2];
-				unsigned int operator = base_value[3];
+                unsigned int type = base_value[0];
+                unsigned int first_value = base_value[1];
+                unsigned int second_value = base_value[2];
+                unsigned int operator = base_value[3];
 
-				if(type == 1) {
-					printk("Received packet of type ARITHMETIC-OP\n");
-					printk("The ARITHMETIC-OP values are %u, %u, %u, %u\n", type, first_value, second_value, operator);
+                if(type == 1) {
+                    printk("Received packet of type ARITHMETIC-OP\n");
+                    printk("The ARITHMETIC-OP values are %u, %u, %u, %u\n", type, first_value, second_value, operator);
 
-					switch(operator) {
-						case 1:
-							base_value[1] = first_value + second_value;
-							break;
-						case 2:
-							base_value[1] = first_value - second_value;
-							break;
-						default:
-							break;
-					}
+                    switch(operator) {
+                        case 1:
+                            base_value[1] = first_value + second_value;
+                            break;
+                        case 2:
+                            base_value[1] = first_value - second_value;
+                            break;
+                        default:
+                            break;
+                    }
 
-					base_value[0] = 2;
-					base_value[2] = 0x000000;
-					base_value[3] = 0x000000;
-				}
-			}
-			skb->data[ip_packet_header_size + 6] = 0x00;
-			skb->data[ip_packet_header_size + 7] = 0x00;
+                    base_value[0] = 2;
+                    base_value[2] = 0x000000;
+                    base_value[3] = 0x000000;
+                }
+            }
+            skb->data[ip_packet_header_size + 6] = 0x00;
+            skb->data[ip_packet_header_size + 7] = 0x00;
 
             // computes the new udp checksum
             udp_checksum = compute_udp_checksum(udp_packet_size, sender_ip_buffer, receiver_ip_buffer, false, &(skb->data[ip_packet_header_size]));
@@ -319,7 +319,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     // clones the socket buffer
     skb_clone = dev_alloc_skb(frame_size);
 
-	// allocates space for the frame buffer
+    // allocates space for the frame buffer
     frame_buffer = kmalloc(frame_size, GFP_KERNEL);
 
     // copies the header part of the frame
@@ -328,7 +328,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     // copies the data part of the frame
     memcpy(&(frame_buffer[ETH_HLEN]), skb->data, skb->len);
 
-	// sets the device of the socket buffer
+    // sets the device of the socket buffer
     skb_clone->dev = dev;
 
     // copies the frame buffer to the socket buffer clone
@@ -347,15 +347,15 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     packet_propagation_value = netif_rx(skb_clone);
 
     switch(packet_propagation_value) {
-		case NET_RX_DROP:
-			printk("The packet was dropped while in propagation\n");
-			break;
-		case NET_RX_SUCCESS:
-			printk("The packet was sent successfully\n");
-			break;
-		default:
-			printk("Unknown status for the packet\n");
-			break;
+        case NET_RX_DROP:
+            printk("The packet was dropped while in propagation\n");
+            break;
+        case NET_RX_SUCCESS:
+            printk("The packet was sent successfully\n");
+            break;
+        default:
+            printk("Unknown status for the packet\n");
+            break;
     }
 
     printk("\n");
@@ -364,7 +364,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
 }
 
 static int dummy_validate(struct nlattr *tb[], struct nlattr *data[]) {
-	printk("Going for validation\n");
+    printk("Going for validation\n");
 
     if (tb[IFLA_ADDRESS]) {
         if (nla_len(tb[IFLA_ADDRESS]) != ETH_ALEN)
@@ -421,8 +421,8 @@ static int __init dummy_init_module(void) {
     for (i = 0; i < numdummies && !err; i++)
         err = dummy_init_one();
 
-	if (err < 0)
-	    __rtnl_link_unregister(&dummy_link_ops);
+    if (err < 0)
+        __rtnl_link_unregister(&dummy_link_ops);
     rtnl_unlock();
 
     return err;
@@ -454,53 +454,53 @@ short compute_icmp_checksum(unsigned short *buffer, unsigned int len) {
 }
 
 unsigned short compute_udp_checksum(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff) {
-	unsigned short prot_udp = 17;
-	unsigned short padd = 0;
-	unsigned short word16;
-	unsigned int sum;
-	unsigned int i;
+    unsigned short prot_udp = 17;
+    unsigned short padd = 0;
+    unsigned short word16;
+    unsigned int sum;
+    unsigned int i;
 
-	// finds out if the length of data is even or odd number, in case it's odd,
-	// adds a padding byte = 0 at the end of packet
-	if ((padding & 1) == 1) {
-		padd = 1;
-		buff[len_udp] = 0;
-	}
+    // finds out if the length of data is even or odd number, in case it's odd,
+    // adds a padding byte = 0 at the end of packet
+    if ((padding & 1) == 1) {
+        padd = 1;
+        buff[len_udp] = 0;
+    }
 
-	// initialize sum to zero
-	sum = 0;
+    // initialize sum to zero
+    sum = 0;
 
-	// make 16 bit words out of every two adjacent 8 bit words and
-	// calculate the sum of all 16 bit words
-	for (i = 0; i < len_udp + padd; i = i + 2) {
-		unsigned short value = buff[i];
-		word16 = ((value << 8) & 0xFF00) + (unsigned short) (buff[i + 1] & 0xFF);
-		sum = sum + (unsigned short) word16;
-	}
+    // make 16 bit words out of every two adjacent 8 bit words and
+    // calculate the sum of all 16 bit words
+    for (i = 0; i < len_udp + padd; i = i + 2) {
+        unsigned short value = buff[i];
+        word16 = ((value << 8) & 0xFF00) + (unsigned short) (buff[i + 1] & 0xFF);
+        sum = sum + (unsigned short) word16;
+    }
 
-	// adds the UDP pseudo header which contains the IP source and destination addresses
-	for (i = 0; i < 4; i = i + 2) {
-		unsigned short value = src_addr[i];
-		word16 = ((value << 8) & 0xFF00) + (unsigned short) (src_addr[i + 1] & 0xFF);
-		sum = sum + word16;
-	}
+    // adds the UDP pseudo header which contains the IP source and destination addresses
+    for (i = 0; i < 4; i = i + 2) {
+        unsigned short value = src_addr[i];
+        word16 = ((value << 8) & 0xFF00) + (unsigned short) (src_addr[i + 1] & 0xFF);
+        sum = sum + word16;
+    }
 
-	for(i = 0; i < 4; i = i + 2) {
-		unsigned short value = dest_addr[i];
-		word16 = ((value << 8) & 0xFF00) + (unsigned short) (dest_addr[i + 1] & 0xFF);
-		sum = sum + word16;
-	}
+    for(i = 0; i < 4; i = i + 2) {
+        unsigned short value = dest_addr[i];
+        word16 = ((value << 8) & 0xFF00) + (unsigned short) (dest_addr[i + 1] & 0xFF);
+        sum = sum + word16;
+    }
 
-	// the protocol number and the length of the UDP packet
-	sum = sum + prot_udp + len_udp;
+    // the protocol number and the length of the UDP packet
+    sum = sum + prot_udp + len_udp;
 
-	// keeps only the last 16 bits of the 32 bit calculated sum and add the carries
-	while(sum >> 16)
-		sum = (sum & 0xFFFF) + (sum >> 16);
+    // keeps only the last 16 bits of the 32 bit calculated sum and add the carries
+    while(sum >> 16)
+        sum = (sum & 0xFFFF) + (sum >> 16);
 
-	// takes the one's complement of sum
-	sum = ~sum;
+    // takes the one's complement of sum
+    sum = ~sum;
 
-	// returns the sum as unsigned short
-	return (unsigned short) sum;
+    // returns the sum as unsigned short
+    return (unsigned short) sum;
 }
