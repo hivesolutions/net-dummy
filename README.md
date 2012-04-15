@@ -1,4 +1,4 @@
-# [Net Dummy Linux Kernel module]
+# Net Dummy Linux Kernel module
 This is a simple tcp echo server implemented inside the TCP/IP Linux stack.
 
 ## Issues
