@@ -9,7 +9,7 @@ being created for such purposes.
 
 ## Loading
 
-In order to load the module execute `insmod net_dummy.ko`.
+In order to load the module execute `insmod ./net_dummy.ko`.
 
 ## Issues
 
