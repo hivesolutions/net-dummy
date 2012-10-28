@@ -59,9 +59,9 @@ static int dummy_set_address(struct net_device *dev, void *parameter);
 /**
  * Function called to set the multicast address in the provided
  * device.
- * 
+ *
  * Under the current module this call as no effect.
- * 
+ *
  * @param dev The device to be used for the setting of the address.
  */
 static void dummy_set_multicast(struct net_device *dev);
@@ -102,10 +102,10 @@ static int dummy_set_address(struct net_device *dev, void *parameter) {
     return immediately in error */
     if(!is_valid_ether_addr(socket_address->sa_data)) {
         return -EADDRNOTAVAIL;
-	}
+    }
 
     /* copies the socket (mac) address to the device address
-	and then returns normally */
+    and then returns normally */
     memcpy(dev->dev_addr, socket_address->sa_data, ETH_ALEN);
     return 0;
 }
@@ -126,16 +126,16 @@ static void dummy_setup(struct net_device *dev) {
     dev->destructor = free_netdev;
 
     /* fills in device structure with ethernet
-	generic values */
+    generic values */
     ether_setup(dev);
     dev->tx_queue_len = 0;
 
     /* sets the maximum transmit unit, this should
-	be the normal value */
+    be the normal value */
     dev->mtu = 1500;
 
     /* generates a random ethernet address for the
-	device (stadndard call) */
+    device (stadndard call) */
     random_ether_addr(dev->dev_addr);
 }
 
@@ -162,8 +162,8 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     unsigned int frame_size;
     struct sk_buff *skb_clone;
     char *frame_buffer;
-	unsigned char *mac_header;
-	unsigned char *data;
+    unsigned char *mac_header;
+    unsigned char *data;
 
     /* increments the transmission information */
     dev->stats.tx_packets++;
@@ -185,15 +185,15 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     /* sets the mac header length */
     skb->mac_len = ETH_HLEN;
 
-	/* retrieves both the data and the mac header, by
+    /* retrieves both the data and the mac header, by
     casting them into byte buffers, required because
     they may assume multiple data types */
 #ifdef NET_SKBUFF_DATA_USES_OFFSET
     data = (unsigned char *) &skb->data;
-	mac_header = (unsigned char *) &skb->mac_header;
+    mac_header = (unsigned char *) &skb->mac_header;
 #else
     data = skb->data;
-	mac_header = skb->mac_header;
+    mac_header = skb->mac_header;
 #endif
 
     printk("Header (%d): 0x", skb->mac_len);
@@ -416,11 +416,11 @@ static int dummy_validate(struct nlattr *tb[], struct nlattr *data[]) {
 
     if(tb[IFLA_ADDRESS]) {
         if(nla_len(tb[IFLA_ADDRESS]) != ETH_ALEN) {
-			return -EINVAL; 
-		}
+            return -EINVAL;
+        }
         if(!is_valid_ether_addr(nla_data(tb[IFLA_ADDRESS]))) {
             return -EADDRNOTAVAIL;
-		}
+        }
     }
 
     printk("Validation passed with success\n");
@@ -436,7 +436,7 @@ static struct rtnl_link_ops dummy_link_ops __read_mostly = {
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
 static const struct net_device_ops dummy_net_ops = {
-	.ndo_start_xmit = dummy_xmit,
+    .ndo_start_xmit = dummy_xmit,
 };
 #endif
 
@@ -473,11 +473,11 @@ static int __init dummy_init_module(void) {
 
     for(i = 0; i < num_dummies && !err; i++) {
         err = dummy_init_one();
-	}
+    }
 
     if(err < 0) {
         __rtnl_link_unregister(&dummy_link_ops);
-	}
+    }
 
     rtnl_unlock();
 
@@ -517,7 +517,7 @@ unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, u
     unsigned int i;
 
     /* finds out if the length of data is even or odd number, in
-	case it's odd, adds a padding byte = 0 at the end of packet */
+    case it's odd, adds a padding byte = 0 at the end of packet */
     if((padding & 1) == 1) {
         padd = 1;
         buff[len_udp] = 0;
@@ -535,7 +535,7 @@ unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, u
     }
 
     /* adds the udp pseudo header which contains the ip
-	source and destination addresses */
+    source and destination addresses */
     for(i = 0; i < 4; i = i + 2) {
         unsigned short value = src_addr[i];
         word16 = ((value << 8) & 0xFF00) + (unsigned short) (src_addr[i + 1] & 0xFF);
@@ -552,7 +552,7 @@ unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, u
     sum = sum + prot_udp + len_udp;
 
     /* keeps only the last 16 bits of the 32 bit calculated
-	sum and add the carries */
+    sum and add the carries */
     while(sum >> 16)
         sum = (sum & 0xFFFF) + (sum >> 16);
 
