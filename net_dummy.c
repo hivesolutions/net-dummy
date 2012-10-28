@@ -1,27 +1,29 @@
-// Hive Drivers
-// Copyright (C) 2008 Hive Solutions Lda.
-//
-// This file is part of Hive Drivers.
-//
-// Hive Drivers is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Hive Drivers is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Hive Drivers. If not, see <http://www.gnu.org/licenses/>.
+/*
+ Hive Drivers
+ Copyright (C) 2008 Hive Solutions Lda.
 
-// __author__    = João Magalhães <joamag@hive.pt>
-// __version__   = 1.0.0
-// __revision__  = $LastChangedRevision$
-// __date__      = $LastChangedDate$
-// __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
-// __license__   = GNU General Public License (GPL), Version 3
+ This file is part of Hive Drivers.
+
+ Hive Drivers is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Drivers is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Drivers. If not, see <http://www.gnu.org/licenses/>.
+
+ __author__    = João Magalhães <joamag@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision$
+ __date__      = $LastChangedDate$
+ __copyright__ = Copyright (c) 2008-2012 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+*/
 
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -37,11 +39,19 @@
 #define IP_ADDRESS_BUFFER_SIZE 4
 #define SUM_ADDRESS_BUFFER_SIZE 10
 
-// the variable to support the number of dummies
-static int numdummies = 1;
+/* the variable to support the number of dummies */
+static int num_dummies = 1;
 
 static int  dummy_set_address(struct net_device *dev, void *parameter);
 static void set_multicast_list(struct net_device *dev);
+
+/**
+ * Runs the setup operation in the current device, after
+ * this operation the default and base configuration should
+ * be set on the device.
+ *
+ * @param dev The pointer to the device to be configured.
+ */
 static void dummy_setup(struct net_device *dev);
 static int  dummy_xmit(struct sk_buff *skb, struct net_device *dev);
 static int  dummy_validate(struct nlattr *tb[], struct nlattr *data[]);
@@ -51,33 +61,31 @@ static void __exit dummy_cleanup_module(void);
 short compute_icmp_checksum(unsigned short *buffer, unsigned int len);
 unsigned short compute_udp_checksum(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff);
 
-// sets the module license
+/* sets the module license and then sets
+the alias (name) of the module */
 MODULE_LICENSE("GPL");
-
-// sets the module alias
 MODULE_ALIAS_RTNL_LINK("net_dummy");
 
-// sets the module init function
+/* sets the module's init and exit functions
+that are called at such workflow "positions" */
 module_init(dummy_init_module);
-
-// sets the module exit function
 module_exit(dummy_cleanup_module);
 
 short packet_number = 0x0001;
 
 static int dummy_set_address(struct net_device *dev, void *parameter) {
-    // retrieves the socket address from the parameter
+    /* retrieves the socket address from the parameter */
     struct sockaddr *socket_address = parameter;
 
-    // in case the ethernet address is not valid
-    if (!is_valid_ether_addr(socket_address->sa_data))
-        // returns in error
+    /* in case the ethernet address is not valid, must
+    return immediately in error */
+    if(!is_valid_ether_addr(socket_address->sa_data)) {
         return -EADDRNOTAVAIL;
+	}
 
-    // copies the socket (mac) address to the device address
+    /* copies the socket (mac) address to the device address
+	and then returns normally */
     memcpy(dev->dev_addr, socket_address->sa_data, ETH_ALEN);
-
-    // returns
     return 0;
 }
 
@@ -85,7 +93,8 @@ static void set_multicast_list(struct net_device *dev) {
 }
 
 static void dummy_setup(struct net_device *dev) {
-    // initializes the device structure
+    /* initializes the various values for
+    the device structure */
     dev->hard_start_xmit = dummy_xmit;
     dev->set_multicast_list = set_multicast_list;
     dev->set_mac_address = dummy_set_address;
@@ -93,14 +102,17 @@ static void dummy_setup(struct net_device *dev) {
     dev->addr_len = ETH_ALEN;
     dev->destructor = free_netdev;
 
-    // fills in device structure with ethernet-generic values
+    /* fills in device structure with ethernet
+	generic values */
     ether_setup(dev);
     dev->tx_queue_len = 0;
 
-    // sets the maximum transmit unit
+    /* sets the maximum transmit unit, this should
+	be the normal value */
     dev->mtu = 1500;
 
-    // generates a random ethernet address
+    /* generates a random ethernet address for the
+	device (stadndard call) */
     random_ether_addr(dev->dev_addr);
 }
 
@@ -385,8 +397,8 @@ static struct rtnl_link_ops dummy_link_ops __read_mostly = {
 };
 
 // number of dummy devices to be set up by this module
-module_param(numdummies, int, 0);
-MODULE_PARM_DESC(numdummies, "Number of dummy pseudo devices");
+module_param(num_dummies, int, 0);
+MODULE_PARM_DESC(num_dummies, "Number of dummy pseudo devices");
 
 static int __init dummy_init_one(void) {
     struct net_device *dev_dummy;
@@ -418,7 +430,7 @@ static int __init dummy_init_module(void) {
     rtnl_lock();
     err = __rtnl_link_register(&dummy_link_ops);
 
-    for (i = 0; i < numdummies && !err; i++)
+    for (i = 0; i < num_dummies && !err; i++)
         err = dummy_init_one();
 
     if (err < 0)
