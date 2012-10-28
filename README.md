@@ -10,6 +10,7 @@ being created for such purposes.
 ## Loading
 
 In order to load the module execute `insmod ./net_dummy.ko`.
+To check for log messages use `tail /var/log/syslog`.
 
 ## Issues
 
