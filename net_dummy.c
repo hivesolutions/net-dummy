@@ -81,6 +81,8 @@ static int  __init dummy_init_module(void);
 static void __exit dummy_cleanup_module(void);
 short icmp_checksum_c(unsigned short *buffer, unsigned int len);
 unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff);
+void print_header_c(struct sk_buff *skb, unsigned char *mac_header);
+void print_data_c(struct sk_buff *skb, unsigned char *data);
 
 /* sets the module license and then sets
 the alias (name) of the module */
@@ -196,18 +198,10 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     mac_header = skb->mac_header;
 #endif
 
-    printk("Header (%d): 0x", skb->mac_len);
-    for(i = 0; i < skb->mac_len; i++) {
-        unsigned char head_value = mac_header[i];
-        printk("%02X ", head_value);
-    }
-    printk("\n");
-    printk("Data (%d/%d): 0x", skb->len, skb->data_len);
-    for(i = 0; i < skb->len; i++) {
-        unsigned char value = data[i];
-        printk("%02X ", value);
-    }
-    printk("\n");
+    /* prints the information on the mac heder an on
+    the data that was just received from the skb */
+    print_header_c(skb, mac_header);
+    print_data_c(skb, data);
 
     /* saves the receiver and serder mac buffers so that a switch between
     the receiver and sender of the packet is possible */
@@ -566,4 +560,30 @@ unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, u
 
     /* returns the sum as unsigned short */
     return (unsigned short) sum;
+}
+
+static void print_header_c(struct sk_buff *skb, unsigned char *mac_header) {
+    /* allocates space for the counter to be
+    used for iterations */
+    size_t i;
+
+    printk("Header (%d): 0x", skb->mac_len);
+    for(i = 0; i < skb->mac_len; i++) {
+        unsigned char head_value = mac_header[i];
+        printk("%02X ", head_value);
+    }
+    printk("\n");
+}
+
+static void print_data_c(struct sk_buff *skb, unsigned char *data) {
+    /* allocates space for the counter to be
+    used for iterations */
+    size_t i;
+
+    printk("Data (%d/%d): 0x", skb->len, skb->data_len);
+    for(i = 0; i < skb->len; i++) {
+        unsigned char value = data[i];
+        printk("%02X ", value);
+    }
+    printk("\n");
 }
