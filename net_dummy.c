@@ -42,8 +42,28 @@
 /* the variable to support the number of dummies */
 static int num_dummies = 1;
 
-static int  dummy_set_address(struct net_device *dev, void *parameter);
-static void set_multicast_list(struct net_device *dev);
+/**
+ * Function called to set the address, in this case only the mac
+ * address to the device once the initialization is complete.
+ *
+ * The parameters argument is assumet to be a socket structure.
+ *
+ * @param dev The device to be used for the setting of the address.
+ * @param parameters The parameters to the setting of the address, this
+ * value is assumed to be a socket structure.
+ * @return The reulst of the setting of the address.
+ */
+static int dummy_set_address(struct net_device *dev, void *parameter);
+
+/**
+ * Function called to set the multicast address in the provided
+ * device.
+ * 
+ * Under the current module this call as no effect.
+ * 
+ * @param dev The device to be used for the setting of the address.
+ */
+static void dummy_set_multicast(struct net_device *dev);
 
 /**
  * Runs the setup operation in the current device, after
@@ -96,7 +116,7 @@ static void dummy_setup(struct net_device *dev) {
     /* initializes the various values for
     the device structure */
     dev->hard_start_xmit = dummy_xmit;
-    dev->set_multicast_list = set_multicast_list;
+    dev->set_multicast_list = dummy_set_multicast;
     dev->set_mac_address = dummy_set_address;
     dev->hard_header_len = ETH_HLEN;
     dev->addr_len = ETH_ALEN;
