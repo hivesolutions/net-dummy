@@ -116,7 +116,7 @@ static void set_multicast_list(struct net_device *dev) {
 static void dummy_setup(struct net_device *dev) {
     /* initializes the various values for
     the device structure */
-#if LINUX_KERNEL_VERSION < KERNEL_VERSION(2,6,30)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
     dev->hard_start_xmit = dummy_xmit;
     dev->set_multicast_list = dummy_set_multicast;
     dev->set_mac_address = dummy_set_address;
@@ -421,7 +421,7 @@ static struct rtnl_link_ops dummy_link_ops __read_mostly = {
     .validate = dummy_validate,
 };
 
-#if LINUX_KERNEL_VERSION >= KERNEL_VERSION(2,6,30)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
 static const struct net_device_ops dummy_net_ops = {
 	.ndo_start_xmit = dummy_xmit,
 };
