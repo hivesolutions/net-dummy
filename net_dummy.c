@@ -162,6 +162,8 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     unsigned int frame_size;
     struct sk_buff *skb_clone;
     char *frame_buffer;
+	unsigned char *mac_header;
+	unsigned char *data;
 
     /* increments the transmission information */
     dev->stats.tx_packets++;
@@ -183,80 +185,91 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     /* sets the mac header length */
     skb->mac_len = ETH_HLEN;
 
+	/* retrieves both the data and the mac header, by
+    casting them into byte buffers, required because
+    it may assume multiple data types */
+#ifdef NET_SKBUFF_DATA_USES_OFFSET
+    data = (unsigned char *) &skb->data;
+	mac_header = (unsigned char *) &skb->mac_header;
+#else
+    data = skb->data;
+	mac_header = skb->mac_header;
+#endif
+
     printk("Header (%d): 0x", skb->mac_len);
     for(i = 0; i < skb->mac_len; i++) {
-        unsigned char head_value = ((unsigned char *) skb->mac_header)[i];
+        unsigned char head_value = mac_header[i];
         printk("%02X ", head_value);
     }
     printk("\n");
     printk("Data (%d/%d): 0x", skb->len, skb->data_len);
     for(i = 0; i < skb->len; i++) {
-        unsigned char value = skb->data[i];
+        unsigned char value = data[i];
         printk("%02X ", value);
     }
     printk("\n");
 
-    memcpy(receiver_mac_buffer, &(skb->mac_header[0]), MAC_ADDRESS_BUFFER_SIZE);
-    memcpy(sender_mac_buffer, &(skb->mac_header[6]), MAC_ADDRESS_BUFFER_SIZE);
+    memcpy(receiver_mac_buffer, &(mac_header[0]), MAC_ADDRESS_BUFFER_SIZE);
+    memcpy(sender_mac_buffer, &(mac_header[6]), MAC_ADDRESS_BUFFER_SIZE);
 
-    memcpy(&(skb->mac_header[0]), sender_mac_buffer, MAC_ADDRESS_BUFFER_SIZE);
-    memcpy(&(skb->mac_header[6]), receiver_mac_buffer, MAC_ADDRESS_BUFFER_SIZE);
+    memcpy(&(mac_header[0]), sender_mac_buffer, MAC_ADDRESS_BUFFER_SIZE);
+    memcpy(&(mac_header[6]), receiver_mac_buffer, MAC_ADDRESS_BUFFER_SIZE);
 
     /* in case it's an arp request */
-    if(skb->mac_header[12] == 0x08 && skb->mac_header[13] == 0x06) {
+    if(mac_header[12] == 0x08 && mac_header[13] == 0x06) {
         printk("Received packet of type ARP\n");
 
         /* sets the reply opcode */
-        skb->data[7] = 0x02;
+        data[7] = 0x02;
 
-        memcpy(sender_sum_buffer, &(skb->data[8]), SUM_ADDRESS_BUFFER_SIZE);
-        memcpy(receiver_sum_buffer, &(skb->data[18]), SUM_ADDRESS_BUFFER_SIZE);
+        memcpy(sender_sum_buffer, &(data[8]), SUM_ADDRESS_BUFFER_SIZE);
+        memcpy(receiver_sum_buffer, &(data[18]), SUM_ADDRESS_BUFFER_SIZE);
 
-        memcpy(&(skb->data[8]), receiver_sum_buffer, SUM_ADDRESS_BUFFER_SIZE);
-        memcpy(&(skb->data[18]), sender_sum_buffer, SUM_ADDRESS_BUFFER_SIZE);
+        memcpy(&(data[8]), receiver_sum_buffer, SUM_ADDRESS_BUFFER_SIZE);
+        memcpy(&(data[18]), sender_sum_buffer, SUM_ADDRESS_BUFFER_SIZE);
     }
     /* in case it's an ip request */
-    else if(skb->mac_header[12] == 0x08 && skb->mac_header[13] == 0x00) {
+    else if(mac_header[12] == 0x08 && mac_header[13] == 0x00) {
         printk("Received packet of type IP\n");
 
         /* calculates the ip packet header size */
-        ip_packet_header_size = (skb->data[0] & 0x0f) * 4;
+        ip_packet_header_size = (data[0] & 0x0f) * 4;
 
         /* retrieves the ip packet size */
-        ip_packet_size = (((unsigned int) skb->data[2]) << 8) + (unsigned int) skb->data[3];
+        ip_packet_size = (((unsigned int) data[2]) << 8) + (unsigned int) data[3];
 
         printk("Header size of packet of type IP: %d\n", ip_packet_header_size);
 
         printk("Size of packet of type IP: %d\n", ip_packet_size);
 
-        memcpy(sender_ip_buffer, &(skb->data[12]), IP_ADDRESS_BUFFER_SIZE);
-        memcpy(receiver_ip_buffer, &(skb->data[16]), IP_ADDRESS_BUFFER_SIZE);
+        memcpy(sender_ip_buffer, &(data[12]), IP_ADDRESS_BUFFER_SIZE);
+        memcpy(receiver_ip_buffer, &(data[16]), IP_ADDRESS_BUFFER_SIZE);
 
-        memcpy(&(skb->data[12]), receiver_ip_buffer, IP_ADDRESS_BUFFER_SIZE);
-        memcpy(&(skb->data[16]), sender_ip_buffer, IP_ADDRESS_BUFFER_SIZE);
+        memcpy(&(data[12]), receiver_ip_buffer, IP_ADDRESS_BUFFER_SIZE);
+        memcpy(&(data[16]), sender_ip_buffer, IP_ADDRESS_BUFFER_SIZE);
 
         /* sets the packet number in the ip packet */
-        skb->data[4] = (unsigned char) (packet_number >> 8 & 0x00FF);
-        skb->data[5] = (unsigned char) (packet_number & 0x00FF);
+        data[4] = (unsigned char) (packet_number >> 8 & 0x00FF);
+        data[5] = (unsigned char) (packet_number & 0x00FF);
 
         /* increments the packet number */
         packet_number++;
 
         /* sets the ip packet flag */
-        skb->data[6] = 0x00;
+        data[6] = 0x00;
 
         /* sets the checksum header bytes to zero */
-        skb->data[10] = 0x00;
-        skb->data[11] = 0x00;
+        data[10] = 0x00;
+        data[11] = 0x00;
 
         /* computes the new ip header checksum */
-        ip_header_checksum = icmp_checksum_c((unsigned short *) skb->data, ip_packet_header_size);
+        ip_header_checksum = icmp_checksum_c((unsigned short *) data, ip_packet_header_size);
 
-        skb->data[10] = (unsigned char) (ip_header_checksum & 0x00FF);
-        skb->data[11] = (unsigned char) (ip_header_checksum >> 8 & 0x00FF);
+        data[10] = (unsigned char) (ip_header_checksum & 0x00FF);
+        data[11] = (unsigned char) (ip_header_checksum >> 8 & 0x00FF);
 
         /* retrieves the ip packet type */
-        ip_packet_type = skb->data[9];
+        ip_packet_type = data[9];
 
         /* in case the request is of type icmp */
         if(ip_packet_type == 0x01) {
@@ -268,26 +281,26 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
             printk("Size of packet of type ICMP: %d\n", icmp_packet_size);
 
             /* retrieves the icmp packet type */
-            icmp_packet_type = skb->data[ip_packet_header_size];
+            icmp_packet_type = data[ip_packet_header_size];
 
             /* in case it's a ping request */
             if(icmp_packet_type == 0x08) {
                 printk("Received packet of type PING\n");
 
                 /* sets the new icmp packet type to ping reply */
-                skb->data[ip_packet_header_size] = 0x00;
+                data[ip_packet_header_size] = 0x00;
 
                 /* sets the checksum header bytes to zero */
-                skb->data[ip_packet_header_size + 2] = 0x00;
-                skb->data[ip_packet_header_size + 3] = 0x00;
+                data[ip_packet_header_size + 2] = 0x00;
+                data[ip_packet_header_size + 3] = 0x00;
 
                 /* computes the new icmp checksum */
-                icmp_checksum = icmp_checksum_c((unsigned short *) &(skb->data[ip_packet_header_size]), icmp_packet_size);
+                icmp_checksum = icmp_checksum_c((unsigned short *) &(data[ip_packet_header_size]), icmp_packet_size);
 
                 printk("Computed new ICMP checksum as: 0x%X\n", icmp_checksum);
 
-                skb->data[ip_packet_header_size + 2] = (unsigned char) (icmp_checksum & 0x00FF);
-                skb->data[ip_packet_header_size + 3] = (unsigned char) (icmp_checksum >> 8 & 0x00FF);
+                data[ip_packet_header_size + 2] = (unsigned char) (icmp_checksum & 0x00FF);
+                data[ip_packet_header_size + 3] = (unsigned char) (icmp_checksum >> 8 & 0x00FF);
             }
         }
         /* in case the request is of type udp */
@@ -295,20 +308,20 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
             printk("Received packet of type UDP\n");
 
             /* computes the udp packet sizeb */
-            udp_packet_size = ((unsigned short) skb->data[ip_packet_header_size + 4] << 8) + skb->data[ip_packet_header_size + 5];
+            udp_packet_size = ((unsigned short) data[ip_packet_header_size + 4] << 8) + data[ip_packet_header_size + 5];
 
             printk("Size of packet of type UDP: %d\n", udp_packet_size);
 
-            memcpy(&sender_port, &(skb->data[ip_packet_header_size]), 2);
-            memcpy(&receiver_port, &(skb->data[ip_packet_header_size + 2]), 2);
+            memcpy(&sender_port, &(data[ip_packet_header_size]), 2);
+            memcpy(&receiver_port, &(data[ip_packet_header_size + 2]), 2);
 
-            memcpy(&(skb->data[ip_packet_header_size]), &receiver_port, 2);
-            memcpy(&(skb->data[ip_packet_header_size + 2]), &sender_port, 2);
+            memcpy(&(data[ip_packet_header_size]), &receiver_port, 2);
+            memcpy(&(data[ip_packet_header_size + 2]), &sender_port, 2);
 
             if(udp_packet_size - 8 == 16) {
                 printk("Received packet of type ARITHMETIC\n");
 
-                unsigned int *base_value = (unsigned int *) &(skb->data[ip_packet_header_size + 8]);
+                unsigned int *base_value = (unsigned int *) &(data[ip_packet_header_size + 8]);
 
                 unsigned int type = base_value[0];
                 unsigned int first_value = base_value[1];
@@ -335,16 +348,16 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
                     base_value[3] = 0x000000;
                 }
             }
-            skb->data[ip_packet_header_size + 6] = 0x00;
-            skb->data[ip_packet_header_size + 7] = 0x00;
+            data[ip_packet_header_size + 6] = 0x00;
+            data[ip_packet_header_size + 7] = 0x00;
 
             /* computes the new udp checksum */
-            udp_checksum = udp_checksum_c(udp_packet_size, sender_ip_buffer, receiver_ip_buffer, false, &(skb->data[ip_packet_header_size]));
+            udp_checksum = udp_checksum_c(udp_packet_size, sender_ip_buffer, receiver_ip_buffer, false, &(data[ip_packet_header_size]));
 
             printk("Computed new UDP checksum as: 0x%X\n", udp_checksum);
 
-            skb->data[ip_packet_header_size + 6] = (unsigned char) (udp_checksum >> 8 & 0x00FF);
-            skb->data[ip_packet_header_size + 7] = (unsigned char) (udp_checksum & 0x00FF);
+            data[ip_packet_header_size + 6] = (unsigned char) (udp_checksum >> 8 & 0x00FF);
+            data[ip_packet_header_size + 7] = (unsigned char) (udp_checksum & 0x00FF);
         }
     }
 
@@ -358,10 +371,10 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     frame_buffer = kmalloc(frame_size, GFP_KERNEL);
 
     /* copies the header part of the frame */
-    memcpy(frame_buffer, skb->mac_header, ETH_HLEN);
+    memcpy(frame_buffer, mac_header, ETH_HLEN);
 
     /* copies the data part of the frame */
-    memcpy(&(frame_buffer[ETH_HLEN]), skb->data, skb->len);
+    memcpy(&(frame_buffer[ETH_HLEN]), data, skb->len);
 
     /* sets the device of the socket buffer */
     skb_clone->dev = dev;
