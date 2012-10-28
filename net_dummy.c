@@ -553,8 +553,9 @@ unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, u
 
     /* keeps only the last 16 bits of the 32 bit calculated
     sum and add the carries */
-    while(sum >> 16)
+    while(sum >> 16) {
         sum = (sum & 0xFFFF) + (sum >> 16);
+    }
 
     /* takes the one's complement of sum */
     sum = ~sum;
