@@ -209,9 +209,13 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     }
     printk("\n");
 
+    /* saves the receiver and serder mac buffers so that a switch between
+    the receiver and sender of the packet is possible */
     memcpy(receiver_mac_buffer, &(mac_header[0]), MAC_ADDRESS_BUFFER_SIZE);
     memcpy(sender_mac_buffer, &(mac_header[6]), MAC_ADDRESS_BUFFER_SIZE);
 
+    /* switches the sender and the receiver of the packet to ensure that
+    the packet is returned (response) */
     memcpy(&(mac_header[0]), sender_mac_buffer, MAC_ADDRESS_BUFFER_SIZE);
     memcpy(&(mac_header[6]), receiver_mac_buffer, MAC_ADDRESS_BUFFER_SIZE);
 
