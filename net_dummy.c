@@ -27,13 +27,13 @@
 
 #include <linux/module.h>
 #include <linux/kernel.h>
+#include <linux/version.h>
 #include <linux/netdevice.h>
 #include <linux/etherdevice.h>
 #include <linux/init.h>
 #include <linux/moduleparam.h>
 #include <linux/rtnetlink.h>
 #include <linux/jiffies.h>
-#include <linux/utsrelease.h>
 #include <net/rtnetlink.h>
 
 #define MAC_ADDRESS_BUFFER_SIZE 6
