@@ -78,8 +78,8 @@ static int  dummy_validate(struct nlattr *tb[], struct nlattr *data[]);
 static int  __init dummy_init_one(void);
 static int  __init dummy_init_module(void);
 static void __exit dummy_cleanup_module(void);
-short compute_icmp_checksum(unsigned short *buffer, unsigned int len);
-unsigned short compute_udp_checksum(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff);
+short icmp_checksum_c(unsigned short *buffer, unsigned int len);
+unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff);
 
 /* sets the module license and then sets
 the alias (name) of the module */
@@ -249,7 +249,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
         skb->data[11] = 0x00;
 
         // computes the new ip header checksum
-        ip_header_checksum = compute_icmp_checksum((unsigned short *) skb->data, ip_packet_header_size);
+        ip_header_checksum = icmp_checksum_c((unsigned short *) skb->data, ip_packet_header_size);
 
         skb->data[10] = (unsigned char) (ip_header_checksum & 0x00FF);
         skb->data[11] = (unsigned char) (ip_header_checksum >> 8 & 0x00FF);
@@ -281,7 +281,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
                 skb->data[ip_packet_header_size + 3] = 0x00;
 
                 // computes the new icmp checksum
-                icmp_checksum = compute_icmp_checksum((unsigned short *) &(skb->data[ip_packet_header_size]), icmp_packet_size);
+                icmp_checksum = icmp_checksum_c((unsigned short *) &(skb->data[ip_packet_header_size]), icmp_packet_size);
 
                 printk("Computed new ICMP checksum as: 0x%X\n", icmp_checksum);
 
@@ -338,7 +338,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
             skb->data[ip_packet_header_size + 7] = 0x00;
 
             // computes the new udp checksum
-            udp_checksum = compute_udp_checksum(udp_packet_size, sender_ip_buffer, receiver_ip_buffer, false, &(skb->data[ip_packet_header_size]));
+            udp_checksum = udp_checksum_c(udp_packet_size, sender_ip_buffer, receiver_ip_buffer, false, &(skb->data[ip_packet_header_size]));
 
             printk("Computed new UDP checksum as: 0x%X\n", udp_checksum);
 
@@ -416,7 +416,6 @@ static struct rtnl_link_ops dummy_link_ops __read_mostly = {
     .kind = "dummy",
     .setup = dummy_setup,
     .validate = dummy_validate,
-
 };
 
 #if LINUX_KERNEL_VERSION >= KERNEL_VERSION(2,6,30)
@@ -473,7 +472,7 @@ static void __exit dummy_cleanup_module(void) {
     rtnl_link_unregister(&dummy_link_ops);
 }
 
-short compute_icmp_checksum(unsigned short *buffer, unsigned int len) {
+short icmp_checksum_c(unsigned short *buffer, unsigned int len) {
     unsigned long sum = 0;
     short answer = 0;
 
@@ -494,7 +493,7 @@ short compute_icmp_checksum(unsigned short *buffer, unsigned int len) {
     return answer;
 }
 
-unsigned short compute_udp_checksum(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff) {
+unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff) {
     unsigned short prot_udp = 17;
     unsigned short padd = 0;
     unsigned short word16;
