@@ -39,7 +39,6 @@
 #define MAC_ADDRESS_BUFFER_SIZE 6
 #define IP_ADDRESS_BUFFER_SIZE 4
 #define SUM_ADDRESS_BUFFER_SIZE 10
-#define NET_SKBUFF_DATA_USES_OFFSET
 
 /* the variable to support the number of dummies */
 static int num_dummies = 1;
@@ -186,7 +185,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
 
     printk("Header (%d): 0x", skb->mac_len);
     for(i = 0; i < skb->mac_len; i++) {
-        unsigned char head_value = skb->mac_header[i];
+        unsigned char head_value = ((unsigned char *) skb->mac_header)[i];
         printk("%02X ", head_value);
     }
     printk("\n");
