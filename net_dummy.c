@@ -187,7 +187,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
 
 	/* retrieves both the data and the mac header, by
     casting them into byte buffers, required because
-    it may assume multiple data types */
+    they may assume multiple data types */
 #ifdef NET_SKBUFF_DATA_USES_OFFSET
     data = (unsigned char *) &skb->data;
 	mac_header = (unsigned char *) &skb->mac_header;
