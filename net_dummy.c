@@ -162,6 +162,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     unsigned int frame_size;
     struct sk_buff *skb_clone;
     char *frame_buffer;
+	unsigned char head_value;
 
     /* increments the transmission information */
     dev->stats.tx_packets++;
@@ -185,7 +186,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
 
     printk("Header (%d): 0x", skb->mac_len);
     for(i = 0; i < skb->mac_len; i++) {
-        unsigned char head_value = skb->mac_header[i];
+        head_value = skb->mac_header[i];
         printk("%02X ", head_value);
     }
     printk("\n");
