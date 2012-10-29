@@ -129,7 +129,7 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     skb->mac_len = ETH_HLEN;
     
     /* prints a debug message to kernel log */
-    N_DEBUG("Finished echo operation...");
+    N_DEBUG("Finished echo operation...\n");
 }
 
 
