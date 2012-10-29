@@ -142,7 +142,6 @@ static void dummy_setup(struct net_device *dev) {
 }
 
 static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
-    unsigned int i;
     unsigned char sender_mac_buffer[MAC_ADDRESS_BUFFER_SIZE];
     unsigned char receiver_mac_buffer[MAC_ADDRESS_BUFFER_SIZE];
     unsigned char sender_sum_buffer[SUM_ADDRESS_BUFFER_SIZE];
