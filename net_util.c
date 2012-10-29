@@ -118,14 +118,14 @@ void print_header_c(struct sk_buff *skb, unsigned char *mac_header) {
     N_DEBUG("\n");
 }
 
-void print_data_c(struct sk_buff *skb, unsigned char *data) {
+void print_data_c(struct sk_buff *skb) {
     /* allocates space for the counter to be
     used for iterations */
     size_t i;
 
     N_DEBUG_F("Data (%d/%d): 0x", skb->len, skb->data_len);
     for(i = 0; i < skb->len; i++) {
-        unsigned char value = data[i];
+        unsigned char value = skb->data[i];
         N_DEBUG_F("%02X ", value);
     }
     N_DEBUG("\n");
