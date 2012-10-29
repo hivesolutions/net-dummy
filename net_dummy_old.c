@@ -184,7 +184,7 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     (from it) to provide extra flexibility */
     skb_orphan(skb);
 
-    /* sets the skb protocol as ethernet and the 
+    /* sets the skb protocol as ethernet and the
     mac (address) length values in the skb (socket buffer) */
     skb->protocol = eth_type_trans(skb, dev);
     skb->mac_len = ETH_HLEN;

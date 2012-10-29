@@ -123,7 +123,7 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     (from it) to provide extra flexibility */
     skb_orphan(skb);
 
-    /* sets the skb protocol as ethernet and the 
+    /* sets the skb protocol as ethernet and the
     mac (address) length values in the skb (socket buffer) */
     skb->protocol = eth_type_trans(skb, dev);
     skb->mac_len = ETH_HLEN;
@@ -145,7 +145,7 @@ static netdev_tx_t dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     dstats->rx_bytes += skb->len;
     dstats->tx_bytes += skb->len;
     u64_stats_update_end(&dstats->syncp);
-    
+
     /* runs the echo operation for the transmission
     of the packet (loop back) */
     dummy_xmit_e(skb, dev);
@@ -240,7 +240,7 @@ static int __init dummy_init_module(void) {
     if(error < 0) { __rtnl_link_unregister(&dummy_link_ops); }
 
     rtnl_unlock();
-    
+
     return error;
 }
 
