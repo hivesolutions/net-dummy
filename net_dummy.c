@@ -446,12 +446,18 @@ MODULE_PARM_DESC(num_dummies, "Number of dummy pseudo devices");
 static int __init dummy_init_one(void) {
     struct net_device *dev_dummy;
     int err;
+    
+    printk("alloc_netdev()\n");
 
     dev_dummy = alloc_netdev(0, "net_dummy%d", dummy_setup);
     if(!dev_dummy) { return -ENOMEM; }
+    
+    printk("dev_alloc_name()\n");
 
     err = dev_alloc_name(dev_dummy, dev_dummy->name);
     if(err < 0) { goto err; }
+    
+    printk("register_netdevice()\n");
 
     dev_dummy->rtnl_link_ops = &dummy_link_ops;
     err = register_netdevice(dev_dummy);
