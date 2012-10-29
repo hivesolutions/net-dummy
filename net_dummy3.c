@@ -53,6 +53,10 @@ static int dummy_set_address(struct net_device *dev, void *p) {
 static void set_multicast_list(struct net_device *dev) {
 }
 
+/**
+ * Structure that defines statistics to be used
+ * in a per cpu philosophy.
+ */
 struct pcpu_dstats {
     u64	rx_packets;
 	u64	tx_packets;
