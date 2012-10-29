@@ -91,9 +91,9 @@ static const struct net_device_ops dummy_netdev_ops = {
 };
 
 static struct rtnl_link_ops dummy_link_ops __read_mostly = {
-	.kind		= "dummy",
-	.setup		= dummy_setup,
-	.validate	= dummy_validate,
+	.kind = "dummy",
+	.setup = dummy_setup,
+	.validate = dummy_validate,
 };
 
 /**
@@ -119,7 +119,7 @@ static int dummy_set_address(struct net_device *dev, void *parameters) {
     return 0;
 }
 
-static void dummy_multicast_list(struct net_device *dev) {
+static void dummy_set_multicast(struct net_device *dev) {
 }
 
 static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats) {
