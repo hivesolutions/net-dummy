@@ -123,6 +123,9 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     to be used in the processing of the message */
     unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
 
+    /* prints a debug message to kernel log */
+    N_DEBUG("Started echo operation...\n");
+
     /* sets the skb as orphan removing the owner
     (from it) to provide extra flexibility */
     skb_orphan(skb);
@@ -138,9 +141,9 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     print_data_c(skb);
 
     if(IS_ARP_REQUEST(mac_header)) {
-        N_DEBUG("Received and ARP packet...\n");
+        N_DEBUG("Received an ARP packet...\n");
     } else if(IS_IP_REQUEST(mac_header)) {
-        N_DEBUG("Received and IP packet...\n");
+        N_DEBUG("Received an IP packet...\n");
     }
 
     /* prints a debug message to kernel log */
