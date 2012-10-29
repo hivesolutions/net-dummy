@@ -39,7 +39,6 @@
 #include <linux/sched.h>
 
 #include "net_util.h"
-#include "net_dummy.h"
 
 #define N_DEBUG(format) printk(format)
 #define N_DEBUG_F(format, ...) printk(format, __VA_ARGS__)
