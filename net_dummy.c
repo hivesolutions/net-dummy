@@ -1,6 +1,6 @@
 /*
  Hive Drivers
- Copyright (C) 2008 Hive Solutions Lda.
+ Copyright (C) 2008-2012 Hive Solutions Lda.
 
  This file is part of Hive Drivers.
 
@@ -113,6 +113,7 @@ static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struc
             rpackets = dstats->rx_packets;
             tpackets = dstats->tx_packets;
         } while(u64_stats_fetch_retry(&dstats->syncp, start));
+       
         stats->rx_bytes += rbytes;
         stats->tx_bytes += tbytes;
         stats->rx_packets += rpackets;

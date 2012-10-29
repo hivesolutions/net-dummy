@@ -1,6 +1,6 @@
 /*
  Hive Drivers
- Copyright (C) 2008 Hive Solutions Lda.
+ Copyright (C) 2008-2012 Hive Solutions Lda.
 
  This file is part of Hive Drivers.
 
