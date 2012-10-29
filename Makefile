@@ -23,7 +23,8 @@
 # __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 # __license__   = GNU General Public License (GPL), Version 3
 
-obj-m += net_dummy.o net_util.o
+obj-m += net_util.o
+obj-m += net_dummy.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
