@@ -110,8 +110,8 @@ void print_head_c(struct sk_buff *skb) {
     used for iterations */
     size_t i;
 
-    N_DEBUG_F("Header (%d): 0x", skb->mac_len);
-    for(i = 0; i < skb->hdr_len; i++) {
+    N_DEBUG_F("Header (%d): 0x", skb->len - skb->data_len);
+    for(i = 0; i < skb->len - skb->data_len; i++) {
         unsigned char head_value = skb->head[i];
         N_DEBUG_F("%02X ", head_value);
     }
