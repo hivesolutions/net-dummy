@@ -25,6 +25,8 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
+#pragma once
+
 /**
  * Function called to set the address, in this case only the mac
  * address to the device once the initialization is complete.

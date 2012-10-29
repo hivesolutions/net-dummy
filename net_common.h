@@ -17,7 +17,7 @@
  You should have received a copy of the GNU General Public License
  along with Hive Drivers. If not, see <http://www.gnu.org/licenses/>.
 
- __author__    = Jo√£o Magalh√£es <joamag@hive.pt>
+ __author__    = Jo„o Magalh„es <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision$
  __date__      = $LastChangedDate$
@@ -27,7 +27,8 @@
 
 #pragma once
 
-short icmp_checksum_c(unsigned short *buffer, unsigned int len);
-unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff);
-void print_header_c(struct sk_buff *skb, unsigned char *mac_header);
-void print_data_c(struct sk_buff *skb, unsigned char *data);
+#include "net_util.h"
+#include "net_dummy.h"
+
+#define N_DEBUG(format) printk(format)
+#define N_DEBUG_F(format, ...) printk(format, __VA_ARGS__)
