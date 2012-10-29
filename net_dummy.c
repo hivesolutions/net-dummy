@@ -189,39 +189,39 @@ static int dummy_validate(struct nlattr *tb[], struct nlattr *data[]) {
 
 static int __init dummy_init_one(void) {
     struct net_device *dev_dummy;
-    int err;
+    int error;
 
     dev_dummy = alloc_netdev(0, "dummy%d", dummy_setup);
     if(!dev_dummy) { return -ENOMEM; }
 
     dev_dummy->rtnl_link_ops = &dummy_link_ops;
-    err = register_netdevice(dev_dummy);
-    if(err < 0) { goto err; }
+    error = register_netdevice(dev_dummy);
+    if(error < 0) { goto error; }
 
     return 0;
 
-err:
+error:
     free_netdev(dev_dummy);
-    return err;
+    return error;
 }
 
 static int __init dummy_init_module(void) {
-    int i;
-    int err = 0;
+    int index;
+    int error = 0;
 
     rtnl_lock();
-    err = __rtnl_link_register(&dummy_link_ops);
+    error = __rtnl_link_register(&dummy_link_ops);
 
-    for(i = 0; i < num_devices && !err; i++) {
-        err = dummy_init_one();
+    for(index = 0; index < num_devices && !err; index++) {
+        error = dummy_init_one();
         cond_resched();
     }
 
-    if(err < 0) { __rtnl_link_unregister(&dummy_link_ops); }
+    if(error < 0) { __rtnl_link_unregister(&dummy_link_ops); }
 
     rtnl_unlock();
 
-    return err;
+    return error;
 }
 
 static void __exit dummy_cleanup_module(void) {
