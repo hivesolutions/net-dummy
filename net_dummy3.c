@@ -67,16 +67,20 @@ static struct rtnl_link_stats64 *dummy_get_stats64(
 
 	for_each_possible_cpu(i) {
 		const struct pcpu_dstats *dstats;
-		u64 tbytes, tpackets;
+		u64 rbytes, tbytes, rpackets, tpackets;
 		unsigned int start;
 
 		dstats = per_cpu_ptr(dev->dstats, i);
 		do {
 			start = u64_stats_fetch_begin(&dstats->syncp);
+            rbytes = dstats->rx_bytes;
 			tbytes = dstats->tx_bytes;
+            rpackets = dstats->rx_packets;
 			tpackets = dstats->tx_packets;
 		} while(u64_stats_fetch_retry(&dstats->syncp, start));
+        stats->rx_bytes += rbytes;
 		stats->tx_bytes += tbytes;
+        stats->rx_packets += rpackets;
 		stats->tx_packets += tpackets;
 	}
 	return stats;
