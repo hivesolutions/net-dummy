@@ -157,7 +157,7 @@ static netdev_tx_t dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     
     /* runs the echo operation for the transmission
     of the packet (loop back) */
-    dummy_xmit_e();
+    dummy_xmit_e(skb, dev);
 
     /* releases the skb structure, avoids any
     memory leak and returns with no error */
