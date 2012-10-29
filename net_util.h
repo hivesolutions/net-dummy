@@ -29,5 +29,5 @@
 
 short icmp_checksum_c(unsigned short *buffer, unsigned int len);
 unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff);
-void print_header_c(struct sk_buff *skb);
+void print_head_c(struct sk_buff *skb);
 void print_data_c(struct sk_buff *skb);
