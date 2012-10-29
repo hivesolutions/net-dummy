@@ -29,7 +29,7 @@
 
 #include "net_util.h"
 
-static short icmp_checksum_c(unsigned short *buffer, unsigned int len) {
+short icmp_checksum_c(unsigned short *buffer, unsigned int len) {
     unsigned long sum = 0;
     short answer = 0;
 
@@ -50,7 +50,7 @@ static short icmp_checksum_c(unsigned short *buffer, unsigned int len) {
     return answer;
 }
 
-static unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff) {
+unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff) {
     unsigned short prot_udp = 17;
     unsigned short padd = 0;
     unsigned short word16;
@@ -105,7 +105,7 @@ static unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_
     return (unsigned short) sum;
 }
 
-static void print_header_c(struct sk_buff *skb, unsigned char *mac_header) {
+void print_header_c(struct sk_buff *skb, unsigned char *mac_header) {
     /* allocates space for the counter to be
     used for iterations */
     size_t i;
@@ -118,7 +118,7 @@ static void print_header_c(struct sk_buff *skb, unsigned char *mac_header) {
     N_DEBUG("\n");
 }
 
-static void print_data_c(struct sk_buff *skb) {
+void print_data_c(struct sk_buff *skb) {
     /* allocates space for the counter to be
     used for iterations */
     size_t i;
