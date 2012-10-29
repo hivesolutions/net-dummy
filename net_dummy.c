@@ -100,6 +100,8 @@ static int dummy_set_address(struct net_device *dev, void *parameter) {
     /* retrieves the socket address from the parameter */
     struct sockaddr *socket_address = parameter;
 
+    printk("dummy_set_address()\n");
+    
     /* in case the ethernet address is not valid, must
     return immediately in error */
     if(!is_valid_ether_addr(socket_address->sa_data)) {
@@ -112,7 +114,8 @@ static int dummy_set_address(struct net_device *dev, void *parameter) {
     return 0;
 }
 
-static void set_multicast_list(struct net_device *dev) {
+static void dummy_set_multicast(struct net_device *dev) {
+    printk("dummy_set_multicast()\n");
 }
 
 static void dummy_setup(struct net_device *dev) {
@@ -236,7 +239,6 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
         ip_packet_size = (((unsigned int) data[2]) << 8) + (unsigned int) data[3];
 
         printk("Header size of packet of type IP: %d\n", ip_packet_header_size);
-
         printk("Size of packet of type IP: %d\n", ip_packet_size);
 
         memcpy(sender_ip_buffer, &(data[12]), IP_ADDRESS_BUFFER_SIZE);
@@ -468,6 +470,8 @@ static int __init dummy_init_module(void) {
     rtnl_lock();
     err = __rtnl_link_register(&dummy_link_ops);
 
+    printk("dummy_init_module()\n");
+    
     for(i = 0; i < num_dummies && !err; i++) {
         err = dummy_init_one();
     }
@@ -482,6 +486,8 @@ static int __init dummy_init_module(void) {
 }
 
 static void __exit dummy_cleanup_module(void) {
+    printk("dummy_cleanup_module()\n");
+
     rtnl_link_unregister(&dummy_link_ops);
 }
 
