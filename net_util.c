@@ -25,6 +25,11 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
+#include <linux/kernel.h>
+#include <linux/version.h>
+#include <linux/netdevice.h>
+#include <linux/etherdevice.h>
+
 #include "net_util.h"
 
 short icmp_checksum_c(unsigned short *buffer, unsigned int len) {
