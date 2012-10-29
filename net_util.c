@@ -123,7 +123,7 @@ void print_head_c(struct sk_buff *skb) {
 void print_data_c(struct sk_buff *skb) {
     /* allocates space for the counter to be
     used for iterations */
-    size_t i;
+    size_t index;
 
     N_DEBUG_F("Data (%d/%d): 0x", skb->len, skb->data_len);
     for(index = 0; index < skb->len; index++) {
