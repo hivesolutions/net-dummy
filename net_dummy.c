@@ -43,8 +43,8 @@
  * in a per cpu philosophy.
  */
 struct pcpu_dstats {
-    u64    rx_packets;
-    u64    tx_packets;
+    u64 rx_packets;
+    u64 tx_packets;
     u64 rx_bytes;
     u64 tx_bytes;
     struct u64_stats_sync syncp;
@@ -212,6 +212,8 @@ static int __init dummy_init_module(void) {
     rtnl_lock();
     error = __rtnl_link_register(&dummy_link_ops);
 
+    /* iterates over the range of devices (number of devices)
+    to be allocated in order to create them */
     for(index = 0; index < num_devices && !error; index++) {
         error = dummy_init_one();
         cond_resched();
