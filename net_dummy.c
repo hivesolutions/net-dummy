@@ -17,7 +17,7 @@
  You should have received a copy of the GNU General Public License
  along with Hive Drivers. If not, see <http://www.gnu.org/licenses/>.
 
- __author__    = Jo„o Magalh„es <joamag@hive.pt>
+ __author__    = Jo√£o Magalh√£es <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision$
  __date__      = $LastChangedDate$
@@ -43,27 +43,27 @@
  * in a per cpu philosophy.
  */
 struct pcpu_dstats {
-    u64	rx_packets;
-	u64	tx_packets;
+    u64    rx_packets;
+    u64    tx_packets;
     u64 rx_bytes;
-	u64 tx_bytes;
-	struct u64_stats_sync syncp;
+    u64 tx_bytes;
+    struct u64_stats_sync syncp;
 };
 
 static const struct net_device_ops dummy_netdev_ops = {
-	.ndo_init = dummy_dev_init,
-	.ndo_uninit = dummy_dev_uninit,
-	.ndo_start_xmit = dummy_xmit,
-	.ndo_validate_addr = eth_validate_addr,
-	.ndo_set_rx_mode = dummy_set_multicast,
-	.ndo_set_mac_address = dummy_set_address,
-	.ndo_get_stats64 = dummy_get_stats64,
+    .ndo_init = dummy_dev_init,
+    .ndo_uninit = dummy_dev_uninit,
+    .ndo_start_xmit = dummy_xmit,
+    .ndo_validate_addr = eth_validate_addr,
+    .ndo_set_rx_mode = dummy_set_multicast,
+    .ndo_set_mac_address = dummy_set_address,
+    .ndo_get_stats64 = dummy_get_stats64,
 };
 
 static struct rtnl_link_ops dummy_link_ops __read_mostly = {
-	.kind = "dummy",
-	.setup = dummy_setup,
-	.validate = dummy_validate,
+    .kind = "dummy",
+    .setup = dummy_setup,
+    .validate = dummy_validate,
 };
 
 /**
@@ -93,131 +93,139 @@ static void dummy_set_multicast(struct net_device *dev) {
 }
 
 static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats) {
-	int i;
+    /* initializes the index counter to be used
+    in the iteration over the cpus */
+    int index;
 
-	for_each_possible_cpu(i) {
-		const struct pcpu_dstats *dstats;
-		u64 rbytes, tbytes, rpackets, tpackets;
-		unsigned int start;
+    /* iterates over each of the possible cpus
+    to update the information on each of them
+    (each cpu contains a statistics structure) */
+    for_each_possible_cpu(index) {
+        const struct pcpu_dstats *dstats;
+        u64 rbytes, tbytes, rpackets, tpackets;
+        unsigned int start;
 
-		dstats = per_cpu_ptr(dev->dstats, i);
-		do {
-			start = u64_stats_fetch_begin(&dstats->syncp);
+        dstats = per_cpu_ptr(dev->dstats, index);
+        do {
+            start = u64_stats_fetch_begin(&dstats->syncp);
             rbytes = dstats->rx_bytes;
-			tbytes = dstats->tx_bytes;
+            tbytes = dstats->tx_bytes;
             rpackets = dstats->rx_packets;
-			tpackets = dstats->tx_packets;
-		} while(u64_stats_fetch_retry(&dstats->syncp, start));
+            tpackets = dstats->tx_packets;
+        } while(u64_stats_fetch_retry(&dstats->syncp, start));
         stats->rx_bytes += rbytes;
-		stats->tx_bytes += tbytes;
+        stats->tx_bytes += tbytes;
         stats->rx_packets += rpackets;
-		stats->tx_packets += tpackets;
-	}
-	return stats;
+        stats->tx_packets += tpackets;
+    }
+
+    /* returns the updated statistics structure
+    to the caller function */
+    return stats;
 }
 
 static netdev_tx_t dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     /* retrieves the reference to the device statistics
     structure that will be updated */
-	struct pcpu_dstats *dstats = this_cpu_ptr(dev->dstats);
+    struct pcpu_dstats *dstats = this_cpu_ptr(dev->dstats);
 
     /* updates the statistics values, note that a
     lock for the update operation is used, required
     for syncing of operation */
-	u64_stats_update_begin(&dstats->syncp);
+    u64_stats_update_begin(&dstats->syncp);
     dstats->rx_packets++;
-	dstats->tx_packets++;
+    dstats->tx_packets++;
     dstats->rx_bytes += skb->len;
-	dstats->tx_bytes += skb->len;
-	u64_stats_update_end(&dstats->syncp);
+    dstats->tx_bytes += skb->len;
+    u64_stats_update_end(&dstats->syncp);
 
     /* releases the skb structure, avoids any
     memory leak and returns with no error */
-	dev_kfree_skb(skb);
-	return NETDEV_TX_OK;
+    dev_kfree_skb(skb);
+    return NETDEV_TX_OK;
 }
 
 static int dummy_dev_init(struct net_device *dev) {
-	dev->dstats = alloc_percpu(struct pcpu_dstats);
-	if(!dev->dstats) {
-		return -ENOMEM;
+    dev->dstats = alloc_percpu(struct pcpu_dstats);
+    if(!dev->dstats) {
+        return -ENOMEM;
     }
 
-	return 0;
+    return 0;
 }
 
 static void dummy_dev_uninit(struct net_device *dev) {
-	free_percpu(dev->dstats);
+    free_percpu(dev->dstats);
 }
 
 static void dummy_setup(struct net_device *dev) {
-	ether_setup(dev);
+    ether_setup(dev);
 
-	/* initializes the device structure */
-	dev->netdev_ops = &dummy_netdev_ops;
-	dev->destructor = free_netdev;
+    /* initializes the device structure */
+    dev->netdev_ops = &dummy_netdev_ops;
+    dev->destructor = free_netdev;
 
-	/* fills in device structure with ethernet generic values */
-	dev->tx_queue_len = 0;
-	dev->flags |= IFF_NOARP;
-	dev->flags &= ~IFF_MULTICAST;
-	dev->features |= NETIF_F_SG | NETIF_F_FRAGLIST | NETIF_F_TSO;
-	dev->features |= NETIF_F_NO_CSUM | NETIF_F_HIGHDMA | NETIF_F_LLTX;
-	random_ether_addr(dev->dev_addr);
+    /* fills in device structure with ethernet generic values */
+    dev->tx_queue_len = 0;
+    dev->flags |= IFF_NOARP;
+    dev->flags &= ~IFF_MULTICAST;
+    dev->features |= NETIF_F_SG | NETIF_F_FRAGLIST | NETIF_F_TSO;
+    dev->features |= NETIF_F_NO_CSUM | NETIF_F_HIGHDMA | NETIF_F_LLTX;
+    random_ether_addr(dev->dev_addr);
 }
 
 static int dummy_validate(struct nlattr *tb[], struct nlattr *data[]) {
-	if(tb[IFLA_ADDRESS]) {
-		if(nla_len(tb[IFLA_ADDRESS]) != ETH_ALEN) {
-			return -EINVAL;
+    if(tb[IFLA_ADDRESS]) {
+        if(nla_len(tb[IFLA_ADDRESS]) != ETH_ALEN) {
+            return -EINVAL;
         }
-		if(!is_valid_ether_addr(nla_data(tb[IFLA_ADDRESS]))) {
-			return -EADDRNOTAVAIL;
+        if(!is_valid_ether_addr(nla_data(tb[IFLA_ADDRESS]))) {
+            return -EADDRNOTAVAIL;
         }
-	}
-    
-	return 0;
+    }
+
+    return 0;
 }
 
 static int __init dummy_init_one(void) {
-	struct net_device *dev_dummy;
-	int err;
+    struct net_device *dev_dummy;
+    int err;
 
-	dev_dummy = alloc_netdev(0, "dummy%d", dummy_setup);
-	if(!dev_dummy) { return -ENOMEM; }
+    dev_dummy = alloc_netdev(0, "dummy%d", dummy_setup);
+    if(!dev_dummy) { return -ENOMEM; }
 
-	dev_dummy->rtnl_link_ops = &dummy_link_ops;
-	err = register_netdevice(dev_dummy);
-	if(err < 0) { goto err; }
-    
-	return 0;
+    dev_dummy->rtnl_link_ops = &dummy_link_ops;
+    err = register_netdevice(dev_dummy);
+    if(err < 0) { goto err; }
+
+    return 0;
 
 err:
-	free_netdev(dev_dummy);
-	return err;
+    free_netdev(dev_dummy);
+    return err;
 }
 
 static int __init dummy_init_module(void) {
-	int i;
+    int i;
     int err = 0;
 
-	rtnl_lock();
-	err = __rtnl_link_register(&dummy_link_ops);
+    rtnl_lock();
+    err = __rtnl_link_register(&dummy_link_ops);
 
-	for(i = 0; i < num_devices && !err; i++) {
-		err = dummy_init_one();
-		cond_resched();
-	}
-    
-	if(err < 0) { __rtnl_link_unregister(&dummy_link_ops); }
-    
-	rtnl_unlock();
+    for(i = 0; i < num_devices && !err; i++) {
+        err = dummy_init_one();
+        cond_resched();
+    }
 
-	return err;
+    if(err < 0) { __rtnl_link_unregister(&dummy_link_ops); }
+
+    rtnl_unlock();
+
+    return err;
 }
 
 static void __exit dummy_cleanup_module(void) {
-	rtnl_link_unregister(&dummy_link_ops);
+    rtnl_link_unregister(&dummy_link_ops);
 }
 
 /* sets the number devices to be set up by this module,

@@ -127,7 +127,7 @@ static void dummy_setup(struct net_device *dev) {
     dev->hard_header_len = ETH_HLEN;
     dev->addr_len = ETH_ALEN;
     dev->destructor = free_netdev;
-    
+
     printk("dummy_setup()\n");
 
     /* fills in device structure with ethernet
@@ -446,17 +446,17 @@ MODULE_PARM_DESC(num_dummies, "Number of dummy pseudo devices");
 static int __init dummy_init_one(void) {
     struct net_device *dev_dummy;
     int err;
-    
+
     printk("alloc_netdev()\n");
 
     dev_dummy = alloc_netdev(0, "net_dummy%d", dummy_setup);
     if(!dev_dummy) { return -ENOMEM; }
-    
+
     printk("dev_alloc_name()\n");
 
     err = dev_alloc_name(dev_dummy, dev_dummy->name);
     if(err < 0) { goto err; }
-    
+
     printk("register_netdevice() %ld\n", dev_dummy);
 
     dev_dummy->rtnl_link_ops = &dummy_link_ops;
@@ -487,7 +487,7 @@ static int __init dummy_init_module(void) {
     }
 
     rtnl_unlock();
-    
+
     printk("dummy_init_module() end\n");
 
     return err;
