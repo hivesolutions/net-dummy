@@ -562,7 +562,7 @@ unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, u
     return (unsigned short) sum;
 }
 
-static void print_header_c(struct sk_buff *skb, unsigned char *mac_header) {
+void print_header_c(struct sk_buff *skb, unsigned char *mac_header) {
     /* allocates space for the counter to be
     used for iterations */
     size_t i;
@@ -575,7 +575,7 @@ static void print_header_c(struct sk_buff *skb, unsigned char *mac_header) {
     printk("\n");
 }
 
-static void print_data_c(struct sk_buff *skb, unsigned char *data) {
+void print_data_c(struct sk_buff *skb, unsigned char *data) {
     /* allocates space for the counter to be
     used for iterations */
     size_t i;
