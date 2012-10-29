@@ -125,6 +125,21 @@ static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struc
     return stats;
 }
 
+
+
+static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
+    /* sets the skb as orphan removing the owner
+    (from it) to provide extra flexibility */
+    skb_orphan(skb);
+
+    /* sets the skb protocol as ethernet and the 
+    mac (address) length values in the skb (socket buffer) */
+    skb->protocol = eth_type_trans(skb, dev);
+    skb->mac_len = ETH_HLEN;
+}
+
+
+
 static netdev_tx_t dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     /* retrieves the reference to the device statistics
     structure that will be updated */
@@ -139,6 +154,10 @@ static netdev_tx_t dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     dstats->rx_bytes += skb->len;
     dstats->tx_bytes += skb->len;
     u64_stats_update_end(&dstats->syncp);
+    
+    /* runs the echo operation for the transmission
+    of the packet (loop back) */
+    dummy_xmit_e();
 
     /* releases the skb structure, avoids any
     memory leak and returns with no error */
@@ -212,6 +231,8 @@ error:
 }
 
 static int __init dummy_init_module(void) {
+    /* allocates space for both the index counter
+    and the error flag (started at no error) */
     int index;
     int error = 0;
 
@@ -228,7 +249,7 @@ static int __init dummy_init_module(void) {
     if(error < 0) { __rtnl_link_unregister(&dummy_link_ops); }
 
     rtnl_unlock();
-
+    
     return error;
 }
 

@@ -180,13 +180,13 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     /* sets the last received time */
     dev->last_rx = jiffies;
 
-    /* sets the skb as orphan removing the owner */
+    /* sets the skb as orphan removing the owner
+    (from it) to provide extra flexibility */
     skb_orphan(skb);
 
-    /* sets the skb protocol as ethernet */
+    /* sets the skb protocol as ethernet and the 
+    mac (address) length values in the skb (socket buffer) */
     skb->protocol = eth_type_trans(skb, dev);
-
-    /* sets the mac header length */
     skb->mac_len = ETH_HLEN;
 
     /* retrieves both the data and the mac header, by
