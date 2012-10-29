@@ -26,9 +26,7 @@
 */
 
 #include <linux/kernel.h>
-#include <linux/version.h>
 #include <linux/netdevice.h>
-#include <linux/etherdevice.h>
 
 #include "net_util.h"
 
