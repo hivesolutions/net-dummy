@@ -105,8 +105,6 @@ unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, u
     return (unsigned short) sum;
 }
 
-#define HEADER_OFFSET 2
-
 void print_head_c(struct sk_buff *skb) {
     /* allocates space for the counter to be
     used for iterations */
@@ -114,7 +112,7 @@ void print_head_c(struct sk_buff *skb) {
 
     N_DEBUG_F("Header (%d): 0x", skb->mac_len);
     for(index = 0; index < skb->mac_len; index++) {
-        unsigned char head_value = skb->head[index + HEADER_OFFSET];
+        unsigned char head_value = skb->head[index + MAC_HEADER_OFFSET];
         N_DEBUG_F("%02X ", head_value);
     }
     N_DEBUG("\n");

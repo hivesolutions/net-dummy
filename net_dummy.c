@@ -119,6 +119,10 @@ static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struc
 
 
 static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
+    /* retrieves the pointer reference to the mac header
+    to be used in the processing of the message */
+    unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
+
     /* sets the skb as orphan removing the owner
     (from it) to provide extra flexibility */
     skb_orphan(skb);
@@ -132,6 +136,10 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     buffer into the logging structures */
     print_head_c(skb);
     print_data_c(skb);
+    
+    if(IS_ARP_REQUEST(mac_header)) {
+        N_DEBUG("Received and ARP Request");
+    }
 
     /* prints a debug message to kernel log */
     N_DEBUG("Finished echo operation...\n");
