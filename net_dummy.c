@@ -54,7 +54,7 @@ static int num_dummies = 1;
  * value is assumed to be a socket structure.
  * @return The reulst of the setting of the address.
  */
-static int dummy_set_address(struct net_device *dev, void *parameter);
+static int dummy_set_address(struct net_device *dev, void *parameters);
 
 /**
  * Function called to set the multicast address in the provided
@@ -96,12 +96,10 @@ module_exit(dummy_cleanup_module);
 
 short packet_number = 0x0001;
 
-static int dummy_set_address(struct net_device *dev, void *parameter) {
-    /* retrieves the socket address from the parameter */
-    struct sockaddr *socket_address = parameter;
+static int dummy_set_address(struct net_device *dev, void *parameters) {
+    /* retrieves the socket address from the parameters */
+    struct sockaddr *socket_address = parameters;
 
-    printk("dummy_set_address()\n");
-    
     /* in case the ethernet address is not valid, must
     return immediately in error */
     if(!is_valid_ether_addr(socket_address->sa_data)) {
