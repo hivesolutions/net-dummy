@@ -142,8 +142,7 @@ static void dummy_setup(struct net_device *dev) {
 	random_ether_addr(dev->dev_addr);
 }
 
-static int dummy_validate(struct nlattr *tb[], struct nlattr *data[])
-{
+static int dummy_validate(struct nlattr *tb[], struct nlattr *data[]) {
 	if(tb[IFLA_ADDRESS]) {
 		if(nla_len(tb[IFLA_ADDRESS]) != ETH_ALEN) {
 			return -EINVAL;
@@ -162,23 +161,22 @@ static struct rtnl_link_ops dummy_link_ops __read_mostly = {
 	.validate	= dummy_validate,
 };
 
-/* Number of dummy devices to be set up by this module. */
+/* sets the number devices to be set up by this module,
+by defult this number should only be one */
 module_param(numdummies, int, 0);
 MODULE_PARM_DESC(numdummies, "Number of dummy pseudo devices");
 
-static int __init dummy_init_one(void)
-{
+static int __init dummy_init_one(void) {
 	struct net_device *dev_dummy;
 	int err;
 
 	dev_dummy = alloc_netdev(0, "dummy%d", dummy_setup);
-	if (!dev_dummy)
-		return -ENOMEM;
+	if(!dev_dummy) { return -ENOMEM; }
 
 	dev_dummy->rtnl_link_ops = &dummy_link_ops;
 	err = register_netdevice(dev_dummy);
-	if (err < 0)
-		goto err;
+	if(err < 0) { goto err; }
+    
 	return 0;
 
 err:
@@ -193,12 +191,12 @@ static int __init dummy_init_module(void) {
 	rtnl_lock();
 	err = __rtnl_link_register(&dummy_link_ops);
 
-	for (i = 0; i < numdummies && !err; i++) {
+	for(i = 0; i < numdummies && !err; i++) {
 		err = dummy_init_one();
 		cond_resched();
 	}
     
-	if (err < 0) { __rtnl_link_unregister(&dummy_link_ops); }
+	if(err < 0) { __rtnl_link_unregister(&dummy_link_ops); }
     
 	rtnl_unlock();
 
