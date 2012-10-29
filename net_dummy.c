@@ -74,10 +74,10 @@ static void dummy_set_multicast(struct net_device *dev);
  * @param dev The pointer to the device to be configured.
  */
 static void dummy_setup(struct net_device *dev);
-static int  dummy_xmit(struct sk_buff *skb, struct net_device *dev);
-static int  dummy_validate(struct nlattr *tb[], struct nlattr *data[]);
-static int  __init dummy_init_one(void);
-static int  __init dummy_init_module(void);
+static int dummy_xmit(struct sk_buff *skb, struct net_device *dev);
+static int dummy_validate(struct nlattr *tb[], struct nlattr *data[]);
+static int __init dummy_init_one(void);
+static int __init dummy_init_module(void);
 static void __exit dummy_cleanup_module(void);
 short icmp_checksum_c(unsigned short *buffer, unsigned int len);
 unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff);
@@ -459,7 +459,7 @@ static int __init dummy_init_one(void) {
     err = dev_alloc_name(dev_dummy, dev_dummy->name);
     if(err < 0) { goto err; }
     
-    printk("register_netdevice()\n");
+    printk("register_netdevice() %ld\n", dev_dummy);
 
     dev_dummy->rtnl_link_ops = &dummy_link_ops;
     err = register_netdevice(dev_dummy);

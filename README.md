@@ -13,6 +13,8 @@ In order to load the module execute `modprobe ./net_dummy.ko` or `insmod ./net_d
 
 To check for log messages use `tail /var/log/syslog`.
 
+To start a new device use `ifconfig dummy0 192.168.1.232 up`
+
 ## Reference
 
 http://lxr.free-electrons.com/source/drivers/net/dummy.c
