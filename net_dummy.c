@@ -129,6 +129,8 @@ static void dummy_setup(struct net_device *dev) {
     dev->hard_header_len = ETH_HLEN;
     dev->addr_len = ETH_ALEN;
     dev->destructor = free_netdev;
+    
+    printk("dummy_setup()\n");
 
     /* fills in device structure with ethernet
     generic values */
