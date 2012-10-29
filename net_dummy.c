@@ -155,17 +155,22 @@ static int dummy_dev_init(struct net_device *dev) {
 }
 
 static void dummy_dev_uninit(struct net_device *dev) {
+    /* releases the device statistics structure
+    in a per cpu basis (for all cpus) */
     free_percpu(dev->dstats);
 }
 
 static void dummy_setup(struct net_device *dev) {
+    /* runs the ethernet setup operation on
+    the device (generic startup) */
     ether_setup(dev);
 
     /* initializes the device structure */
     dev->netdev_ops = &dummy_netdev_ops;
     dev->destructor = free_netdev;
 
-    /* fills in device structure with ethernet generic values */
+    /* fills in device structure with ethernet generic values
+    this should allows the device to run properly */
     dev->tx_queue_len = 0;
     dev->flags |= IFF_NOARP;
     dev->flags &= ~IFF_MULTICAST;
@@ -233,7 +238,7 @@ static void __exit dummy_cleanup_module(void) {
 /* sets the number devices to be set up by this module,
 by defult this number should only be one */
 module_param(num_devices, int, 0);
-MODULE_PARM_DESC(num_devices, "Number of pseudo devices");
+MODULE_PARM_DESC(num_devices, "Number of pseudo devices, to be created");
 
 /* sets the initialization, finalization functions and
 the module name and license */
