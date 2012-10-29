@@ -471,7 +471,7 @@ static int __init dummy_init_module(void) {
     err = __rtnl_link_register(&dummy_link_ops);
 
     printk("dummy_init_module()\n");
-    
+
     for(i = 0; i < num_dummies && !err; i++) {
         err = dummy_init_one();
     }
@@ -481,6 +481,8 @@ static int __init dummy_init_module(void) {
     }
 
     rtnl_unlock();
+    
+    printk("dummy_init_module() end\n");
 
     return err;
 }
