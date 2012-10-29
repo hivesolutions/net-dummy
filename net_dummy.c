@@ -25,16 +25,7 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/netdevice.h>
-#include <linux/etherdevice.h>
-#include <linux/init.h>
-#include <linux/moduleparam.h>
-#include <linux/rtnetlink.h>
-#include <net/rtnetlink.h>
-#include <linux/u64_stats_sync.h>
-#include <linux/sched.h>
+#include "common.h"
 
 #include "net_dummy.h"
 

@@ -27,9 +27,6 @@
 
 #include "common.h"
 
-#include <linux/kernel.h>
-#include <linux/netdevice.h>
-
 #include "net_util.h"
 
 short icmp_checksum_c(unsigned short *buffer, unsigned int len) {

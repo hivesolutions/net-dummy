@@ -27,8 +27,6 @@
 
 #pragma once
 
-#include "common.h"
-
 /**
  * Function called to set the address, in this case only the mac
  * address to the device once the initialization is complete.
