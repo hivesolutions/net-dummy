@@ -29,7 +29,11 @@
 
 #define MAC_HEADER_OFFSET 2
 
-#define IS_ARP_REQUEST(mac_header) mac_header[12] == 0x08 && mac_header[13] == 0x06 
+#define IS_ARP_REQUEST(mac_header) mac_header[12] == 0x08 && mac_header[13] == 0x06
+#define IS_IP_REQUEST(mac_header) mac_header[12] == 0x08 && mac_header[13] == 0x00
+
+    /* in case it's an ip request */
+    else if(mac_header[12] == 0x08 && mac_header[13] == 0x00) {
 
 short icmp_checksum_c(unsigned short *buffer, unsigned int len);
 unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff);
