@@ -36,22 +36,20 @@
 #include <linux/u64_stats_sync.h>
 #include <linux/sched.h>
 
-static int numdummies = 1;
-
-static int dummy_set_address(struct net_device *dev, void *p) {
-	struct sockaddr *sa = p;
-
-	if(!is_valid_ether_addr(sa->sa_data)) {
-		return -EADDRNOTAVAIL;
-    }
-
-	memcpy(dev->dev_addr, sa->sa_data, ETH_ALEN);
-	return 0;
-}
-
-/* fake multicast ability */
-static void set_multicast_list(struct net_device *dev) {
-}
+static int dummy_set_address(struct net_device *dev, void *parameters);
+static void set_multicast_list(struct net_device *dev);
+static struct rtnl_link_stats64 *dummy_get_stats64(
+    struct net_device *dev,
+    struct rtnl_link_stats64 *stats
+);
+static netdev_tx_t dummy_xmit(struct sk_buff *skb, struct net_device *dev);
+static int dummy_dev_init(struct net_device *dev);
+static void dummy_dev_uninit(struct net_device *dev);
+static void dummy_setup(struct net_device *dev);
+static int dummy_validate(struct nlattr *tb[], struct nlattr *data[]);
+static int __init dummy_init_one(void);
+static int __init dummy_init_module(void);
+static void __exit dummy_cleanup_module(void);
 
 /**
  * Structure that defines statistics to be used
@@ -65,10 +63,52 @@ struct pcpu_dstats {
 	struct u64_stats_sync syncp;
 };
 
+static const struct net_device_ops dummy_netdev_ops = {
+	.ndo_init = dummy_dev_init,
+	.ndo_uninit = dummy_dev_uninit,
+	.ndo_start_xmit = dummy_xmit,
+	.ndo_validate_addr = eth_validate_addr,
+	.ndo_set_rx_mode = set_multicast_list,
+	.ndo_set_mac_address = dummy_set_address,
+	.ndo_get_stats64 = dummy_get_stats64,
+};
+
+static struct rtnl_link_ops dummy_link_ops __read_mostly = {
+	.kind		= "dummy",
+	.setup		= dummy_setup,
+	.validate	= dummy_validate,
+};
+
+/**
+ * The number of devices to be registered for
+ * the current driver, by default this value
+ * should be one.
+ */
+static int num_devices = 1;
+
+static int dummy_set_address(struct net_device *dev, void *parameters) {
+    /* retrieves the socket address from the parameters */
+    struct sockaddr *socket_address = parameters;
+
+    /* in case the ethernet address is not valid, must
+    return immediately in error */
+    if(!is_valid_ether_addr(socket_address->sa_data)) {
+        return -EADDRNOTAVAIL;
+    }
+
+    /* copies the socket (mac) address to the device address
+    and then returns normally */
+    memcpy(dev->dev_addr, socket_address->sa_data, ETH_ALEN);
+    return 0;
+}
+
+static void set_multicast_list(struct net_device *dev) {
+}
+
 static struct rtnl_link_stats64 *dummy_get_stats64(
     struct net_device *dev,
-    struct rtnl_link_stats64 *stats)
-{
+    struct rtnl_link_stats64 *stats
+) {
 	int i;
 
 	for_each_possible_cpu(i) {
@@ -126,16 +166,6 @@ static void dummy_dev_uninit(struct net_device *dev) {
 	free_percpu(dev->dstats);
 }
 
-static const struct net_device_ops dummy_netdev_ops = {
-	.ndo_init = dummy_dev_init,
-	.ndo_uninit = dummy_dev_uninit,
-	.ndo_start_xmit = dummy_xmit,
-	.ndo_validate_addr = eth_validate_addr,
-	.ndo_set_rx_mode = set_multicast_list,
-	.ndo_set_mac_address = dummy_set_address,
-	.ndo_get_stats64 = dummy_get_stats64,
-};
-
 static void dummy_setup(struct net_device *dev) {
 	ether_setup(dev);
 
@@ -165,17 +195,6 @@ static int dummy_validate(struct nlattr *tb[], struct nlattr *data[]) {
 	return 0;
 }
 
-static struct rtnl_link_ops dummy_link_ops __read_mostly = {
-	.kind		= "dummy",
-	.setup		= dummy_setup,
-	.validate	= dummy_validate,
-};
-
-/* sets the number devices to be set up by this module,
-by defult this number should only be one */
-module_param(numdummies, int, 0);
-MODULE_PARM_DESC(numdummies, "Number of dummy pseudo devices");
-
 static int __init dummy_init_one(void) {
 	struct net_device *dev_dummy;
 	int err;
@@ -201,7 +220,7 @@ static int __init dummy_init_module(void) {
 	rtnl_lock();
 	err = __rtnl_link_register(&dummy_link_ops);
 
-	for(i = 0; i < numdummies && !err; i++) {
+	for(i = 0; i < num_devices && !err; i++) {
 		err = dummy_init_one();
 		cond_resched();
 	}
@@ -217,6 +236,13 @@ static void __exit dummy_cleanup_module(void) {
 	rtnl_link_unregister(&dummy_link_ops);
 }
 
+/* sets the number devices to be set up by this module,
+by defult this number should only be one */
+module_param(num_devices, int, 0);
+MODULE_PARM_DESC(num_devices, "Number of pseudo devices");
+
+/* sets the initialization, finalization functions and
+the module name and license */
 module_init(dummy_init_module);
 module_exit(dummy_cleanup_module);
 MODULE_LICENSE("GPL");
