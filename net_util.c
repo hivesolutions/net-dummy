@@ -111,7 +111,7 @@ void print_head_c(struct sk_buff *skb) {
     size_t i;
 
     N_DEBUG_F("Header (%d): 0x", skb->mac_len);
-    for(i = 0; i < skb->mac_len; i++) {
+    for(i = 0; i < skb->hdr_len; i++) {
         unsigned char head_value = skb->head[i];
         N_DEBUG_F("%02X ", head_value);
     }
