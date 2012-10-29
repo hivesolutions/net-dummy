@@ -128,6 +128,8 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     skb->protocol = eth_type_trans(skb, dev);
     skb->mac_len = ETH_HLEN;
     
+    print_data_c(skb->data);
+    
     /* prints a debug message to kernel log */
     N_DEBUG("Finished echo operation...\n");
 }

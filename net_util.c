@@ -110,12 +110,12 @@ void print_header_c(struct sk_buff *skb, unsigned char *mac_header) {
     used for iterations */
     size_t i;
 
-    printk("Header (%d): 0x", skb->mac_len);
+    N_DEBUG_F("Header (%d): 0x", skb->mac_len);
     for(i = 0; i < skb->mac_len; i++) {
         unsigned char head_value = mac_header[i];
-        printk("%02X ", head_value);
+        N_DEBUG_F("%02X ", head_value);
     }
-    printk("\n");
+    N_DEBUG("\n");
 }
 
 void print_data_c(struct sk_buff *skb, unsigned char *data) {
@@ -123,10 +123,10 @@ void print_data_c(struct sk_buff *skb, unsigned char *data) {
     used for iterations */
     size_t i;
 
-    printk("Data (%d/%d): 0x", skb->len, skb->data_len);
+    N_DEBUG_F("Data (%d/%d): 0x", skb->len, skb->data_len);
     for(i = 0; i < skb->len; i++) {
         unsigned char value = data[i];
-        printk("%02X ", value);
+        N_DEBUG_F("%02X ", value);
     }
-    printk("\n");
+    N_DEBUG("\n");
 }
