@@ -128,8 +128,9 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     skb->protocol = eth_type_trans(skb, dev);
     skb->mac_len = ETH_HLEN;
 
-    /* prints the data buffer from the socket buffer
-    to the logging structures */
+    /* prints the data header and buffer from the socket
+    buffer into the logging structures */
+    print_header_c(skb);
     print_data_c(skb);
 
     /* prints a debug message to kernel log */
