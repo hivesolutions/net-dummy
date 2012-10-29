@@ -15,6 +15,8 @@ To check for log messages use `tail /var/log/syslog`.
 
 To start a new device use `ifconfig dummy0 192.168.1.232 up`
 
+In order to unload the module use `rmmod net_dummy`
+
 ## Reference
 
 http://lxr.free-electrons.com/source/drivers/net/dummy.c
