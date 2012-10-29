@@ -212,7 +212,7 @@ static int __init dummy_init_module(void) {
     rtnl_lock();
     error = __rtnl_link_register(&dummy_link_ops);
 
-    for(index = 0; index < num_devices && !err; index++) {
+    for(index = 0; index < num_devices && !error; index++) {
         error = dummy_init_one();
         cond_resched();
     }
