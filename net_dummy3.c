@@ -36,12 +36,29 @@
 #include <linux/u64_stats_sync.h>
 #include <linux/sched.h>
 
+/**
+ * Function called to set the address, in this case only the mac
+ * address to the device once the initialization is complete.
+ *
+ * The parameters argument is assumet to be a socket structure.
+ *
+ * @param dev The device to be used for the setting of the address.
+ * @param parameters The parameters to the setting of the address, this
+ * value is assumed to be a socket structure.
+ * @return The reulst of the setting of the address.
+ */
 static int dummy_set_address(struct net_device *dev, void *parameters);
-static void set_multicast_list(struct net_device *dev);
-static struct rtnl_link_stats64 *dummy_get_stats64(
-    struct net_device *dev,
-    struct rtnl_link_stats64 *stats
-);
+
+/**
+ * Function called to set the multicast address in the provided
+ * device.
+ *
+ * Under the current module this call as no effect.
+ *
+ * @param dev The device to be used for the setting of the address.
+ */
+static void dummy_set_multicast(struct net_device *dev);
+static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats);
 static netdev_tx_t dummy_xmit(struct sk_buff *skb, struct net_device *dev);
 static int dummy_dev_init(struct net_device *dev);
 static void dummy_dev_uninit(struct net_device *dev);
@@ -68,7 +85,7 @@ static const struct net_device_ops dummy_netdev_ops = {
 	.ndo_uninit = dummy_dev_uninit,
 	.ndo_start_xmit = dummy_xmit,
 	.ndo_validate_addr = eth_validate_addr,
-	.ndo_set_rx_mode = set_multicast_list,
+	.ndo_set_rx_mode = dummy_set_multicast,
 	.ndo_set_mac_address = dummy_set_address,
 	.ndo_get_stats64 = dummy_get_stats64,
 };
@@ -102,13 +119,10 @@ static int dummy_set_address(struct net_device *dev, void *parameters) {
     return 0;
 }
 
-static void set_multicast_list(struct net_device *dev) {
+static void dummy_multicast_list(struct net_device *dev) {
 }
 
-static struct rtnl_link_stats64 *dummy_get_stats64(
-    struct net_device *dev,
-    struct rtnl_link_stats64 *stats
-) {
+static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats) {
 	int i;
 
 	for_each_possible_cpu(i) {
