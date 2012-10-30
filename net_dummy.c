@@ -151,7 +151,7 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     /* copies the frame buffer to the socket buffer clone
     and then releases the memory of the frame buffer */
     memcpy(skb_clone->data, frame_buffer, frame_size);
-    kfree(frame_buffer);
+    //kfree(frame_buffer);
 
     /* puts the frame size in the socket buffer, this should
     update the internal buffer sizes, then updates the protocol
