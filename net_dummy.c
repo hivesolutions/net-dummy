@@ -189,6 +189,10 @@ static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
     a valid response is sent */
     memcpy(&(data[8]), receiver_sum, SUM_ADDRESS_SIZE);
     memcpy(&(data[18]), sender_sum, SUM_ADDRESS_SIZE);
+    
+    /* duplicates (clones) the socket buffer and then propagates
+    the cloned value over the stack, retrievinf the result */
+    dummy_xmit_p(skb, dev);
 }
 
 static void dummy_xmit_ip(struct sk_buff *skb, struct net_device *dev) {
@@ -222,10 +226,6 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     } else if(IS_IP_REQUEST(mac_header)) {
         N_DEBUG("Received an IP packet...\n");
     }
-
-    /* duplicates (clones) the socket buffer and then propagates
-    the cloned value over the stack, retrievinf the result */
-    /*dummy_xmit_p(skb, dev);*/
 
     /* prints a debug message to kernel log */
     N_DEBUG("Finished echo operation...\n");
