@@ -116,7 +116,50 @@ static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struc
     return stats;
 }
 
+static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
+    /* calculates the frame size using both the length
+    of the data part and the length of the header, then
+    allocates a new socket buffer for it */
+    frame_size = skb->len + ETH_HLEN;
+    skb_clone = dev_alloc_skb(frame_size);
+    frame_buffer = kmalloc(frame_size, GFP_KERNEL);
 
+    /* copies the header and the data parts of the frame
+    into the new frame buffer */
+    memcpy(frame_buffer, mac_header, ETH_HLEN);
+    memcpy(&(frame_buffer[ETH_HLEN]), data, skb->len);
+
+    /* sets the device of the socket buffer in the clone
+    (replication of the operation) */
+    skb_clone->dev = dev;
+
+    /* copies the frame buffer to the socket buffer clone
+    and then releases the memory of the frame buffer */
+    memcpy(skb_clone->data, frame_buffer, frame_size);
+    kfree(frame_buffer);
+
+    /* puts the frame size in the socket buffer, this should
+    update the internal buffer sizes, then updates the protocol
+    value in the clone with the ethernet value */
+    skb_put(skb_clone, frame_size);
+    skb_clone->protocol = eth_type_trans(skb_clone, dev);
+
+    /* propagates the packet over the stack and retrieves the
+    result of the propagation */
+    packet_propagation_value = netif_rx(skb_clone);
+
+    switch(packet_propagation_value) {
+        case NET_RX_DROP:
+            printk("The packet was dropped while in propagation\n");
+            break;
+        case NET_RX_SUCCESS:
+            printk("The packet was sent successfully\n");
+            break;
+        default:
+            printk("Unknown status for the packet\n");
+            break;
+    }
+}
 
 static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     /* retrieves the pointer reference to the mac header
@@ -145,6 +188,10 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     } else if(IS_IP_REQUEST(mac_header)) {
         N_DEBUG("Received an IP packet...\n");
     }
+
+    /* duplicates (clones) the socket buffer and then propagates
+    the cloned value over the stack, retrievinf the result */
+    dummy_xmit_p(skb, dev);
 
     /* prints a debug message to kernel log */
     N_DEBUG("Finished echo operation...\n");

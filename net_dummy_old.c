@@ -360,37 +360,35 @@ static int dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
         }
     }
 
-    /* calculates the frame size */
+    /* calculates the frame size using both the length
+    of the data part and the length of the header, then
+    allocates a new socket buffer for it */
     frame_size = skb->len + ETH_HLEN;
-
-    /* clones the socket buffer */
     skb_clone = dev_alloc_skb(frame_size);
-
-    /* allocates space for the frame buffer */
     frame_buffer = kmalloc(frame_size, GFP_KERNEL);
 
-    /* copies the header part of the frame */
+    /* copies the header and the data parts of the frame
+    into the new frame buffer */
     memcpy(frame_buffer, mac_header, ETH_HLEN);
-
-    /* copies the data part of the frame */
     memcpy(&(frame_buffer[ETH_HLEN]), data, skb->len);
 
-    /* sets the device of the socket buffer */
+    /* sets the device of the socket buffer in the clone
+    (replication of the operation) */
     skb_clone->dev = dev;
 
-    /* copies the frame buffer to the socket buffer clone */
+    /* copies the frame buffer to the socket buffer clone
+    and then releases the memory of the frame buffer */
     memcpy(skb_clone->data, frame_buffer, frame_size);
-
-    /* releases the frame buffer memory */
     kfree(frame_buffer);
 
-    /* puts the frame size in the socket buffer */
+    /* puts the frame size in the socket buffer, this should
+    update the internal buffer sizes, then updates the protocol
+    value in the clone with the ethernet value */
     skb_put(skb_clone, frame_size);
-
-    /* sets the socket buffer protocol */
     skb_clone->protocol = eth_type_trans(skb_clone, dev);
 
-    /* propagates the packet and retrieves the result */
+    /* propagates the packet over the stack and retrieves the
+    result of the propagation */
     packet_propagation_value = netif_rx(skb_clone);
 
     switch(packet_propagation_value) {
