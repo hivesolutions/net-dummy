@@ -28,6 +28,7 @@
 #pragma once
 
 #define MAC_HEADER_OFFSET 2
+#define SUM_ADDRESS_SIZE 10
 
 #define IS_ARP_REQUEST(mac_header) mac_header[12] == 0x08 && mac_header[13] == 0x06
 #define IS_IP_REQUEST(mac_header) mac_header[12] == 0x08 && mac_header[13] == 0x00

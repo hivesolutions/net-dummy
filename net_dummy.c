@@ -172,6 +172,19 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
 }
 
 static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
+    unsigned char sender_sum[SUM_ADDRESS_BUFFER_SIZE];
+    unsigned char receiver_sum[SUM_ADDRESS_BUFFER_SIZE];
+    unsigned char *data = skb->data;
+
+    /* sets the reply opcode in the arp data, should
+    be able to validate the packet*/
+    data[7] = 0x02;
+
+    memcpy(sender_sum, &(data[8]), SUM_ADDRESS_SIZE);
+    memcpy(receiver_sum, &(data[18]), SUM_ADDRESS_SIZE);
+
+    memcpy(&(data[8]), receiver_sum, SUM_ADDRESS_SIZE);
+    memcpy(&(data[18]), sender_sum, SUM_ADDRESS_SIZE);
 }
 
 static void dummy_xmit_ip(struct sk_buff *skb, struct net_device *dev) {
