@@ -43,6 +43,8 @@ UDP_IP = "192.168.1.232"
 UDP_PORT = 5005
 MESSAGE = "Hello, World!"
 
+# prints a series of messages indicating the diagnostics
+# information about the current operation
 print "UDP target IP:", UDP_IP
 print "UDP target port:", UDP_PORT
 print "message:", MESSAGE
