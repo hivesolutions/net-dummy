@@ -155,9 +155,9 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     skb_clone->protocol = eth_type_trans(skb_clone, dev);
 
     /* propagates the packet over the stack and retrieves the
-    result of the propagation */
+    result of the propagation, printing a message according to
+    the result of the propagation */
     propagation = netif_rx(skb_clone);
-
     switch(propagation) {
         case NET_RX_DROP:
             printk("The packet was dropped while in propagation\n");
@@ -169,6 +169,12 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
             printk("Unknown status for the packet\n");
             break;
     }
+}
+
+static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
+}
+
+static void dummy_xmit_ip(struct sk_buff *skb, struct net_device *dev) {
 }
 
 static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
@@ -206,8 +212,6 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     /* prints a debug message to kernel log */
     N_DEBUG("Finished echo operation...\n");
 }
-
-
 
 static netdev_tx_t dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
     /* retrieves the reference to the device statistics
