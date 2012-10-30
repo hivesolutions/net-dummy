@@ -133,7 +133,7 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     frame_size = skb->len + ETH_HLEN;
     skb_clone = dev_alloc_skb(frame_size);
     frame_buffer = kmalloc(frame_size, GFP_ATOMIC);
-    
+
     /* in case either the skb clone or the frame buffer
     are not allocated correctly return immediately */
     if(skb_clone == NULL) { return; }
@@ -194,7 +194,7 @@ static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
     a valid response is sent */
     memcpy(&(data[8]), receiver_sum, SUM_ADDRESS_SIZE);
     memcpy(&(data[18]), sender_sum, SUM_ADDRESS_SIZE);
-    
+
     /* duplicates (clones) the socket buffer and then propagates
     the cloned value over the stack, retrievinf the result */
     dummy_xmit_p(skb, dev);
@@ -224,7 +224,7 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     /* prints the address of the current device
     to the standard outpud (deubg) */
     print_addr_c((unsigned char *) dev->dev_addr);
-    
+
     /* prints the data header and buffer from the socket
     buffer into the logging structures */
     print_head_c(skb);
@@ -294,7 +294,7 @@ static void dummy_setup(struct net_device *dev) {
     /* sets the maximum transmit unit, this should
     be the normal value */
     dev->mtu = 1500;
-    
+
     /* fills in device structure with ethernet generic values
     this should allows the device to run properly */
     dev->tx_queue_len = 0;
