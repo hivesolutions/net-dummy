@@ -126,6 +126,8 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     and dat to be used in the processing of the message */
     unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
     unsigned char *data = skb->data;
+    
+    rtnl_lock();
 
     /* calculates the frame size using both the length
     of the data part and the length of the header, then
@@ -157,7 +159,7 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     /* propagates the packet over the stack and retrieves the
     result of the propagation, printing a message according to
     the result of the propagation */
-    /*propagation = netif_rx(skb_clone);
+    propagation = netif_rx(skb_clone);
     switch(propagation) {
         case NET_RX_DROP:
             printk("The packet was dropped while in propagation\n");
@@ -168,7 +170,9 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
         default:
             printk("Unknown status for the packet\n");
             break;
-    }*/
+    }
+    
+    rtnl_unlock();
 }
 
 static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
