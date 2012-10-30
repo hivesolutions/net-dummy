@@ -119,6 +119,7 @@ static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struc
 static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     int packet_propagation_value;
     unsigned int frame_size;
+    char *frame_buffer;
     struct sk_buff *skb_clone;
 
     /* calculates the frame size using both the length
