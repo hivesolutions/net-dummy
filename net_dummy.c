@@ -157,7 +157,7 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     /* propagates the packet over the stack and retrieves the
     result of the propagation, printing a message according to
     the result of the propagation */
-    propagation = netif_rx(skb_clone);
+    /*propagation = netif_rx(skb_clone);
     switch(propagation) {
         case NET_RX_DROP:
             printk("The packet was dropped while in propagation\n");
@@ -168,7 +168,7 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
         default:
             printk("Unknown status for the packet\n");
             break;
-    }
+    }*/
 }
 
 static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
