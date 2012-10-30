@@ -231,6 +231,7 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
         dummy_xmit_arp(skb, dev);
     } else if(IS_IP_REQUEST(mac_header)) {
         N_DEBUG("Received an IP packet...\n");
+        dummy_xmit_ip(skb, dev);
     }
 
     /* prints a debug message to kernel log */
