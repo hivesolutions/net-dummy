@@ -127,19 +127,19 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
     unsigned char *data = skb->data;
 
+    return;
+    
     /* calculates the frame size using both the length
     of the data part and the length of the header, then
     allocates a new socket buffer for it */
     frame_size = skb->len + ETH_HLEN;
-    skb_clone = netdev_alloc_skb(dev, frame_size);
+    skb_clone = dev_alloc_skb(frame_size);
     frame_buffer = kmalloc(frame_size, GFP_KERNEL);
     
     /* in case either the skb clone or the frame buffer
     are not allocated correctly return immediately */
     if(skb_clone == NULL) { return; }
     if(frame_buffer == NULL) { return; }
-    
-    return;
 
     /* copies the header and the data parts of the frame
     into the new frame buffer */
