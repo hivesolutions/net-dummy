@@ -225,7 +225,7 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
 
     /* duplicates (clones) the socket buffer and then propagates
     the cloned value over the stack, retrievinf the result */
-    dummy_xmit_p(skb, dev);
+    /*dummy_xmit_p(skb, dev);*/
 
     /* prints a debug message to kernel log */
     N_DEBUG("Finished echo operation...\n");
@@ -248,7 +248,7 @@ static netdev_tx_t dummy_xmit(struct sk_buff *skb, struct net_device *dev) {
 
     /* runs the echo operation for the transmission
     of the packet (loop back) */
-    /*dummy_xmit_e(skb, dev); */
+    dummy_xmit_e(skb, dev);
 
     /* releases the skb structure, avoids any
     memory leak and returns with no error */
