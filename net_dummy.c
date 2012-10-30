@@ -151,7 +151,7 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     /* copies the frame buffer to the socket buffer clone
     and then releases the memory of the frame buffer */
     memcpy(skb_clone->data, frame_buffer, frame_size);
-    //kfree(frame_buffer);
+    kfree(frame_buffer);
 
     /* puts the frame size in the socket buffer, this should
     update the internal buffer sizes, then updates the protocol
@@ -285,12 +285,16 @@ static void dummy_setup(struct net_device *dev) {
     dev->netdev_ops = &dummy_netdev_ops;
     dev->destructor = free_netdev;
 
+    /* sets the maximum transmit unit, this should
+    be the normal value */
+    dev->mtu = 1500;
+    
     /* fills in device structure with ethernet generic values
     this should allows the device to run properly */
-    dev->tx_queue_len = 0;
+    /*dev->tx_queue_len = 0;
     dev->flags &= ~IFF_MULTICAST;
     dev->features |= NETIF_F_SG | NETIF_F_FRAGLIST | NETIF_F_TSO;
-    dev->features |= NETIF_F_NO_CSUM | NETIF_F_HIGHDMA | NETIF_F_LLTX;
+    dev->features |= NETIF_F_NO_CSUM | NETIF_F_HIGHDMA | NETIF_F_LLTX;*/
     random_ether_addr(dev->dev_addr);
 }
 
