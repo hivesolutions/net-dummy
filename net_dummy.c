@@ -131,7 +131,7 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     of the data part and the length of the header, then
     allocates a new socket buffer for it */
     frame_size = skb->len + ETH_HLEN;
-    skb_clone = dev_alloc_skb(frame_size);
+    skb_clone = netdev_alloc_skb(dev, frame_size);
     frame_buffer = kmalloc(frame_size, GFP_KERNEL);
     
     /* in case either the skb clone or the frame buffer
