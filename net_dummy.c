@@ -201,6 +201,7 @@ static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
 }
 
 static void dummy_xmit_ip(struct sk_buff *skb, struct net_device *dev) {
+    N_DEBUG_F("Packet type: %d\n", skb->data[9]);
 }
 
 static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
@@ -292,9 +293,6 @@ static void dummy_setup(struct net_device *dev) {
     /* fills in device structure with ethernet generic values
     this should allows the device to run properly */
     dev->tx_queue_len = 0;
-   /* dev->flags &= ~IFF_MULTICAST;
-    dev->features |= NETIF_F_SG | NETIF_F_FRAGLIST | NETIF_F_TSO;
-    dev->features |= NETIF_F_NO_CSUM | NETIF_F_HIGHDMA | NETIF_F_LLTX;*/
     random_ether_addr(dev->dev_addr);
 }
 
