@@ -180,9 +180,13 @@ static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
     be able to validate the packet*/
     data[7] = 0x02;
 
+    /* copies the sender and the receiver addresses from
+    the arp packet to switch them */
     memcpy(sender_sum, &(data[8]), SUM_ADDRESS_SIZE);
     memcpy(receiver_sum, &(data[18]), SUM_ADDRESS_SIZE);
 
+    /* switches the receiver and sender packets so that
+    a valid response is sent */
     memcpy(&(data[8]), receiver_sum, SUM_ADDRESS_SIZE);
     memcpy(&(data[18]), sender_sum, SUM_ADDRESS_SIZE);
 }
