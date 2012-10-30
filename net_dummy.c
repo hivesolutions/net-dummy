@@ -126,8 +126,6 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     and dat to be used in the processing of the message */
     unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
     unsigned char *data = skb->data;
-    
-    rtnl_lock();
 
     /* calculates the frame size using both the length
     of the data part and the length of the header, then
@@ -135,6 +133,11 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     frame_size = skb->len + ETH_HLEN;
     skb_clone = dev_alloc_skb(frame_size);
     frame_buffer = kmalloc(frame_size, GFP_KERNEL);
+    
+    /* in case either the skb clone or the frame buffer
+    are not allocated correctly return immediately */
+    if(skb_clone == NULL) { return; }
+    if(frame_buffer == NULL) { return; }
 
     /* copies the header and the data parts of the frame
     into the new frame buffer */
@@ -171,8 +174,6 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
             printk("Unknown status for the packet\n");
             break;
     }
-    
-    rtnl_unlock();
 }
 
 static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
