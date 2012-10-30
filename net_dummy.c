@@ -138,6 +138,8 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     are not allocated correctly return immediately */
     if(skb_clone == NULL) { return; }
     if(frame_buffer == NULL) { return; }
+    
+    return;
 
     /* copies the header and the data parts of the frame
     into the new frame buffer */
@@ -291,10 +293,10 @@ static void dummy_setup(struct net_device *dev) {
     
     /* fills in device structure with ethernet generic values
     this should allows the device to run properly */
-    /*dev->tx_queue_len = 0;
+    dev->tx_queue_len = 0;
     dev->flags &= ~IFF_MULTICAST;
     dev->features |= NETIF_F_SG | NETIF_F_FRAGLIST | NETIF_F_TSO;
-    dev->features |= NETIF_F_NO_CSUM | NETIF_F_HIGHDMA | NETIF_F_LLTX;*/
+    dev->features |= NETIF_F_NO_CSUM | NETIF_F_HIGHDMA | NETIF_F_LLTX;
     random_ether_addr(dev->dev_addr);
 }
 
