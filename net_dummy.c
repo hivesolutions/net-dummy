@@ -214,6 +214,7 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
 
     if(IS_ARP_REQUEST(mac_header)) {
         N_DEBUG("Received an ARP packet...\n");
+        dummy_xmit_arp(skb, dev);
     } else if(IS_IP_REQUEST(mac_header)) {
         N_DEBUG("Received an IP packet...\n");
     }
