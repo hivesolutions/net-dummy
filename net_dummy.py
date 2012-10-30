@@ -40,8 +40,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import socket
 
 UDP_IP = "192.168.1.232"
+""" The ip address of the target to be used
+to send the udp packet """
+
 UDP_PORT = 5005
+""" The ip port of the target to be used
+to send the udp packet """
+
 MESSAGE = "Hello, World!"
+""" The message to be sent in the udp packet,
+not that it cannot exceed the maximum size of
+the packet (maximum transmission unit) """
 
 # prints a series of messages indicating the diagnostics
 # information about the current operation
