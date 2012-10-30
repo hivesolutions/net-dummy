@@ -121,6 +121,8 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     unsigned int frame_size;
     char *frame_buffer;
     struct sk_buff *skb_clone;
+    unsigned char *mac_header;
+    unsigned char *data;
 
     /* calculates the frame size using both the length
     of the data part and the length of the header, then
