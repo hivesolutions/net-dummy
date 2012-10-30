@@ -117,11 +117,11 @@ static struct rtnl_link_stats64 *dummy_get_stats64(struct net_device *dev, struc
 }
 
 static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
-    int packet_propagation_value;
+    int propagation;
     unsigned int frame_size;
     char *frame_buffer;
     struct sk_buff *skb_clone;
-    
+
     /* retrieves the pointer reference to the mac header
     and dat to be used in the processing of the message */
     unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
@@ -156,9 +156,9 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
 
     /* propagates the packet over the stack and retrieves the
     result of the propagation */
-    packet_propagation_value = netif_rx(skb_clone);
+    propagation = netif_rx(skb_clone);
 
-    switch(packet_propagation_value) {
+    switch(propagation) {
         case NET_RX_DROP:
             printk("The packet was dropped while in propagation\n");
             break;
