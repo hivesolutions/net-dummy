@@ -121,8 +121,11 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     unsigned int frame_size;
     char *frame_buffer;
     struct sk_buff *skb_clone;
-    unsigned char *mac_header;
-    unsigned char *data;
+    
+    /* retrieves the pointer reference to the mac header
+    and dat to be used in the processing of the message */
+    unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
+    unsigned char *data = skb->data;
 
     /* calculates the frame size using both the length
     of the data part and the length of the header, then
