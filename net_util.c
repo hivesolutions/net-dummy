@@ -105,6 +105,19 @@ unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, u
     return (unsigned short) sum;
 }
 
+void print_addr_c(unsigned char *addr) {
+    /* allocates space for the counter to be
+    used for iterations */
+    size_t index;
+
+    N_DEBUG_F("Address (%d): 0x", MAC_ADDRESS_SIZE);
+    for(index = 0; index < MAC_ADDRESS_SIZE; index++) {
+        unsigned char value = addr[index];
+        N_DEBUG_F("%02X ", value);
+    }
+    N_DEBUG("\n");
+}
+
 void print_head_c(struct sk_buff *skb) {
     /* allocates space for the counter to be
     used for iterations */

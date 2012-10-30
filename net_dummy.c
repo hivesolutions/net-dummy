@@ -221,6 +221,10 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     skb->protocol = eth_type_trans(skb, dev);
     skb->mac_len = ETH_HLEN;
 
+    /* prints the address of the current device
+    to the standard outpud (deubg) */
+    print_addr_c((unsigned char *) dev->dev_addr);
+    
     /* prints the data header and buffer from the socket
     buffer into the logging structures */
     print_head_c(skb);

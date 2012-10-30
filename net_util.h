@@ -28,6 +28,8 @@
 #pragma once
 
 #define MAC_HEADER_OFFSET 2
+#define MAC_ADDRESS_SIZE 6
+#define IP_ADDRESS_SIZE 4
 #define SUM_ADDRESS_SIZE 10
 
 #define IS_ARP_REQUEST(mac_header) mac_header[12] == 0x08 && mac_header[13] == 0x06
@@ -35,5 +37,6 @@
 
 short icmp_checksum_c(unsigned short *buffer, unsigned int len);
 unsigned short udp_checksum_c(unsigned short len_udp, unsigned char *src_addr, unsigned char *dest_addr, bool padding, unsigned char *buff);
+void print_addr_c(unsigned char *addr);
 void print_head_c(struct sk_buff *skb);
 void print_data_c(struct sk_buff *skb);
