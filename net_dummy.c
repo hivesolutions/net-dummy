@@ -172,8 +172,8 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
 }
 
 static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
-    unsigned char sender_sum[SUM_ADDRESS_BUFFER_SIZE];
-    unsigned char receiver_sum[SUM_ADDRESS_BUFFER_SIZE];
+    unsigned char sender_sum[SUM_ADDRESS_SIZE];
+    unsigned char receiver_sum[SUM_ADDRESS_SIZE];
     unsigned char *data = skb->data;
 
     /* sets the reply opcode in the arp data, should
