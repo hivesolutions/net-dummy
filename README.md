@@ -5,7 +5,7 @@ This driver takes controll of the complete sub network (any ip address from the 
 
 ## Testing
 
-There's currently no script for testing this module, but a simple python script is being created for such purposes.
+There's currently no script for testing this module, but a simple python script is being created for such purposes.  
 It should be able to perform basic tasks for the testing of the device driver.
 
 ## Loading
