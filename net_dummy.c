@@ -196,7 +196,8 @@ static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
     memcpy(&(data[18]), sender_sum, SUM_ADDRESS_SIZE);
 
     /* copies the current device address to the sender
-    position for the address */
+    position for the address so that all the ip addresses
+    in the current sub network are assigned to this device */
     memcpy(&(data[8]), dev->dev_addr, MAC_ADDRESS_SIZE);
 
     /* duplicates (clones) the socket buffer and then propagates
