@@ -203,7 +203,7 @@ static void dummy_xmit_ensure(struct sk_buff *skb, struct net_device *dev) {
     /* sets the receiver of the packet as the sender of original
     packet and sets the sender of the packet as the address of
     the currently used device */
-    memcpy(&(mac_header[0]), &(mac_header[6], MAC_ADDRESS_SIZE);
+    memcpy(&(mac_header[0]), &(mac_header[6]), MAC_ADDRESS_SIZE);
     memcpy(&(mac_header[6]), dev->dev_addr, MAC_ADDRESS_SIZE);
 }
 
