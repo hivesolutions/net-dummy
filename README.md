@@ -1,6 +1,6 @@
 # Net Dummy Linux Kernel module
 
-This is a simple tcp echo server implemented inside the TCP/IP Linux stack.
+This is a simple tcp echo server implemented inside the TCP/IP Linux stack.  
 This driver takes controll of the complete sub network (any ip address from the network responds).
 
 ## Testing
