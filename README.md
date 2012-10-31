@@ -18,7 +18,7 @@ In order to load the module execute `modprobe ./dummy.ko` or `insmod ./dummy.ko`
 
 ## Tricks
 
-Keep in mind that a *different network (from you local network)* should be used to avoid any conflicts.
+Keep in mind that a *different network* (from you local network) should be used to avoid any conflicts.
 
 ## Reference
 
