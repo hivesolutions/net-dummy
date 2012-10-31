@@ -12,7 +12,7 @@ It should be able to perform basic tasks for the testing of the device driver.
 
 In order to load the module execute `modprobe ./dummy.ko` or `insmod ./dummy.ko`.
 
-* To check for log messages use `tail /var/log/syslog`.
+* To check for log messages use `tail /var/log/syslog`
 * To start a new interface use `ifconfig dummy0 192.168.0.1 up`
 * In order to unload the module use `rmmod net_dummy`
 
