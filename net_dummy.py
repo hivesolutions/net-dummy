@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import socket
 
-UDP_IP = "192.168.1.232"
+UDP_IP = "192.168.0.2"
 """ The ip address of the target to be used
 to send the udp packet """
 
