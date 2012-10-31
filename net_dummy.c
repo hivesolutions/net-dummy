@@ -201,8 +201,7 @@ static void dummy_xmit_ensure(struct sk_buff *skb, struct net_device *dev) {
     /* retrieves the pointer reference to the mac header
     to be used in the processing of the message */
     unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
-
-    the receiver and sender of the packet is possible */
+    
     memcpy(sender_mac, &(mac_header[6]), MAC_ADDRESS_SIZE);
 
     memcpy(&(mac_header[0]), sender_mac, MAC_ADDRESS_SIZE);
