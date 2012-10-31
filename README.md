@@ -5,8 +5,8 @@ This driver takes controll of the complete sub network (any ip address from the 
 
 ## Testing
 
-Tehre's currently no script for testing this module, but a simple python script is
-being created for such purposes.
+There's currently no script for testing this module, but a simple python script is being created for such purposes.
+It should be able to perform basic tasks for the testing of the device driver.
 
 ## Loading
 
@@ -18,7 +18,7 @@ In order to load the module execute `modprobe ./dummy.ko` or `insmod ./dummy.ko`
 
 ## Tricks
 
-Keep in mind that a different network (from you local network) should be used to avoid any conflicts.
+Keep in mind that a *different network (from you local network)* should be used to avoid any conflicts.
 
 ## Reference
 
