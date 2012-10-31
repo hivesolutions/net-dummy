@@ -176,10 +176,33 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
     }
 }
 
+static void dummy_xmit_switch(struct sk_buff *skb, struct net_device *dev) {
+    unsigned char sender_mac[MAC_ADDRESS_SIZE];
+    unsigned char receiver_mac[MAC_ADDRESS_SIZE];
+
+    /* retrieves the pointer reference to the mac header
+    to be used in the processing of the message */
+    unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
+
+    /* saves the receiver and serder mac buffers so that a switch between
+    the receiver and sender of the packet is possible */
+    memcpy(receiver_mac, &(mac_header[0]), MAC_ADDRESS_SIZE);
+    memcpy(sender_mac, &(mac_header[6]), MAC_ADDRESS_SIZE);
+
+    /* switches the sender and the receiver of the packet to ensure that
+    the packet is returned (response) */
+    memcpy(&(mac_header[0]), sender_mac, MAC_ADDRESS_SIZE);
+    memcpy(&(mac_header[6]), receiver_mac, MAC_ADDRESS_SIZE);
+}
+
 static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
     unsigned char sender_sum[SUM_ADDRESS_SIZE];
     unsigned char receiver_sum[SUM_ADDRESS_SIZE];
     unsigned char *data = skb->data;
+
+    /* switches the mac address header so that the packet
+    is returned to the origin (network level response) */
+    dummy_xmit_switch(skb, dev);
 
     /* sets the reply opcode in the arp data, should
     be able to validate the packet*/
@@ -210,9 +233,6 @@ static void dummy_xmit_ip(struct sk_buff *skb, struct net_device *dev) {
 }
 
 static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
-    unsigned char sender_mac[MAC_ADDRESS_SIZE];
-    unsigned char receiver_mac[MAC_ADDRESS_SIZE];
-
     /* retrieves the pointer reference to the mac header
     to be used in the processing of the message */
     unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
@@ -237,16 +257,6 @@ static void dummy_xmit_e(struct sk_buff *skb, struct net_device *dev) {
     buffer into the logging structures */
     print_head_c(skb);
     print_data_c(skb);
-
-    /* saves the receiver and serder mac buffers so that a switch between
-    the receiver and sender of the packet is possible */
-    memcpy(receiver_mac, &(mac_header[0]), MAC_ADDRESS_SIZE);
-    memcpy(sender_mac, &(mac_header[6]), MAC_ADDRESS_SIZE);
-
-    /* switches the sender and the receiver of the packet to ensure that
-    the packet is returned (response) */
-    memcpy(&(mac_header[0]), sender_mac, MAC_ADDRESS_SIZE);
-    memcpy(&(mac_header[6]), receiver_mac, MAC_ADDRESS_SIZE);
 
     if(IS_ARP_REQUEST(mac_header)) {
         N_DEBUG("Received an ARP packet...\n");
