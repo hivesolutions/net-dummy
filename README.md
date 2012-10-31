@@ -1,6 +1,7 @@
 # Net Dummy Linux Kernel module
 
 This is a simple tcp echo server implemented inside the TCP/IP Linux stack.
+This driver takes controll of the complete sub network (any ip address from the network responds).
 
 ## Testing
 
@@ -16,6 +17,10 @@ To check for log messages use `tail /var/log/syslog`.
 To start a new device use `ifconfig dummy0 192.168.1.232 up`
 
 In order to unload the module use `rmmod net_dummy`
+
+## Tricks
+
+Keep in mind that a different network (from you local network) should be used to avoid any conflicts.
 
 ## Reference
 
