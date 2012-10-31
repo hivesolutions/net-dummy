@@ -177,6 +177,8 @@ static void dummy_xmit_p(struct sk_buff *skb, struct net_device *dev) {
 }
 
 static void dummy_xmit_switch(struct sk_buff *skb, struct net_device *dev) {
+    /* allocates space for both the mac address of the
+    sender of the packet and the receiver */
     unsigned char sender_mac[MAC_ADDRESS_SIZE];
     unsigned char receiver_mac[MAC_ADDRESS_SIZE];
 
@@ -208,6 +210,9 @@ static void dummy_xmit_ensure(struct sk_buff *skb, struct net_device *dev) {
 }
 
 static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
+    /* allocates space for the sender and receiver parts
+    of arp resolution request and retrieves the reference
+    to the socket buffer's data */
     unsigned char sender_sum[SUM_ADDRESS_SIZE];
     unsigned char receiver_sum[SUM_ADDRESS_SIZE];
     unsigned char *data = skb->data;
