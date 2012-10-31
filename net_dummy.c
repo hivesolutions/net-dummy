@@ -195,6 +195,20 @@ static void dummy_xmit_switch(struct sk_buff *skb, struct net_device *dev) {
     memcpy(&(mac_header[6]), receiver_mac, MAC_ADDRESS_SIZE);
 }
 
+static void dummy_xmit_ensure(struct sk_buff *skb, struct net_device *dev) {
+    unsigned char sender_mac[MAC_ADDRESS_SIZE];
+
+    /* retrieves the pointer reference to the mac header
+    to be used in the processing of the message */
+    unsigned char *mac_header = skb->head + MAC_HEADER_OFFSET;
+
+    the receiver and sender of the packet is possible */
+    memcpy(sender_mac, &(mac_header[6]), MAC_ADDRESS_SIZE);
+
+    memcpy(&(mac_header[0]), sender_mac, MAC_ADDRESS_SIZE);
+    memcpy(&(mac_header[6]), dev->dev_addr, MAC_ADDRESS_SIZE);
+}
+
 static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
     unsigned char sender_sum[SUM_ADDRESS_SIZE];
     unsigned char receiver_sum[SUM_ADDRESS_SIZE];
@@ -202,7 +216,7 @@ static void dummy_xmit_arp(struct sk_buff *skb, struct net_device *dev) {
 
     /* switches the mac address header so that the packet
     is returned to the origin (network level response) */
-    dummy_xmit_switch(skb, dev);
+    dummy_xmit_ensure(skb, dev);
 
     /* sets the reply opcode in the arp data, should
     be able to validate the packet*/
